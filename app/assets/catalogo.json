@@ -1,0 +1,1025 @@
+[
+  {
+    "gbifKey": 2480668,
+    "nombreCientifico": "Geranoaetus melanoleucus",
+    "nombreComun": "Águila de páramo",
+    "grupo": "ave",
+    "estacionIds": [
+      "aguacerales",
+      "arenales",
+      "lunares",
+      "valle_tumbas"
+    ],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 634,
+    "foto": "especies/geranoaetus_melanoleucus.webp",
+    "credito": {
+      "autor": "Gabriel Delasala",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/731959931",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2481907,
+    "nombreCientifico": "Vultur gryphus",
+    "nombreComun": "Cóndor de los Andes",
+    "grupo": "ave",
+    "estacionIds": [
+      "lunares",
+      "valle_tumbas"
+    ],
+    "categoriaAmenaza": "VU",
+    "registrosSector": 257,
+    "foto": "especies/vultur_gryphus.webp",
+    "credito": {
+      "autor": "heikkih",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/74741181",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2498068,
+    "nombreCientifico": "Anas andium",
+    "nombreComun": "Pato andino",
+    "grupo": "ave",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 250,
+    "foto": "especies/anas_andium.webp",
+    "credito": {
+      "autor": "Maryse",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/251860943",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 8286763,
+    "nombreCientifico": "Espeletia hartwegiana",
+    "nombreComun": "Frailejón",
+    "grupo": "planta",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 181,
+    "foto": "especies/espeletia_hartwegiana.webp",
+    "credito": {
+      "autor": "Sebastián Berrío",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/30520030",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 7749255,
+    "nombreCientifico": "Plantago rigida",
+    "nombreComun": "Colchón de agua",
+    "grupo": "planta",
+    "estacionIds": [
+      "arenales"
+    ],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 113,
+    "foto": "especies/plantago_rigida.webp",
+    "credito": {
+      "autor": "Paúl Gonzáles",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/251632644",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 3108482,
+    "nombreCientifico": "Senecio niveoaureus",
+    "nombreComun": "Senecio",
+    "grupo": "planta",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 33,
+    "foto": "especies/senecio_niveoaureus.webp",
+    "credito": {
+      "autor": "carocastanou",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/49393496",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 10745861,
+    "nombreCientifico": "Diplostephium eriophorum",
+    "nombreComun": "Romero de páramo",
+    "grupo": "planta",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 21,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 2435099,
+    "nombreCientifico": "Puma concolor",
+    "nombreComun": "Puma",
+    "grupo": "mamifero",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 17,
+    "foto": "especies/puma_concolor.webp",
+    "credito": {
+      "autor": "pfaucher",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/9834553",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 11833854,
+    "nombreCientifico": "Andicolea colombiana",
+    "nombreComun": "Coral de páramo",
+    "grupo": "planta",
+    "estacionIds": [
+      "arenales",
+      "lunares"
+    ],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 12,
+    "foto": "especies/andicolea_colombiana.webp",
+    "credito": {
+      "autor": "Hinko Talsma",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/5576772",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 8815699,
+    "nombreCientifico": "Sylvilagus andinus",
+    "nombreComun": "Conejo de páramo",
+    "grupo": "mamifero",
+    "estacionIds": [
+      "aguacerales",
+      "arenales"
+    ],
+    "categoriaAmenaza": null,
+    "registrosSector": 8,
+    "foto": "especies/sylvilagus_andinus.webp",
+    "credito": {
+      "autor": "Christoph Moning",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/60540811",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 8618720,
+    "nombreCientifico": "Nasuella olivacea",
+    "nombreComun": "Cusumbo de montaña",
+    "grupo": "mamifero",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "NT",
+    "registrosSector": 5,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 5706515,
+    "nombreCientifico": "Cuniculus taczanowskii",
+    "nombreComun": "Guagua loba",
+    "grupo": "mamifero",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "NT",
+    "registrosSector": 4,
+    "foto": "especies/cuniculus_taczanowskii.webp",
+    "credito": {
+      "autor": "Fredy Ramón C.",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/425934537",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2434584,
+    "nombreCientifico": "Cerdocyon thous",
+    "nombreComun": "Zorro",
+    "grupo": "mamifero",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1,
+    "foto": "especies/cerdocyon_thous.webp",
+    "credito": {
+      "autor": "Diego Carús",
+      "licencia": "CC0",
+      "enlace": "https://www.inaturalist.org/photos/34537325",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 12197555,
+    "nombreCientifico": "Paramochloa effusa",
+    "nombreComun": "Pajonal (paja de páramo)",
+    "grupo": "planta",
+    "estacionIds": [
+      "aguacerales",
+      "arenales",
+      "lunares"
+    ],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 1,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 2440899,
+    "nombreCientifico": "Tapirus pinchaque",
+    "nombreComun": "Danta de montaña",
+    "grupo": "mamifero",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "EN",
+    "registrosSector": 1,
+    "foto": "especies/tapirus_pinchaque.webp",
+    "credito": {
+      "autor": "Robert Gowan",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/43068088",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2433716,
+    "nombreCientifico": "Eira barbara",
+    "nombreComun": "Taira",
+    "grupo": "mamifero",
+    "estacionIds": [
+      "aguacerales"
+    ],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 0,
+    "foto": "especies/eira_barbara.webp",
+    "credito": {
+      "autor": "hcukier",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/657732567",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2434930,
+    "nombreCientifico": "Leopardus tigrinus",
+    "nombreComun": "Tigrillo",
+    "grupo": "mamifero",
+    "estacionIds": [
+      "arenales"
+    ],
+    "categoriaAmenaza": "VU",
+    "registrosSector": 0,
+    "foto": "especies/leopardus_tigrinus.webp",
+    "credito": {
+      "autor": "mauricio_guitar",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/342548719",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 8847274,
+    "nombreCientifico": "Oxypogon stuebelii",
+    "nombreComun": "Colibrí chivito del nevado del ruiz",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "VU",
+    "registrosSector": 2116,
+    "foto": "especies/oxypogon_stuebelii.webp",
+    "credito": {
+      "autor": "Rob Simpson",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/65700653",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 9491290,
+    "nombreCientifico": "Geospizopsis unicolor",
+    "nombreComun": "Pájaro plomo",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1884,
+    "foto": "especies/geospizopsis_unicolor.webp",
+    "credito": {
+      "autor": "Luca Boscain",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/56970429",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 5231103,
+    "nombreCientifico": "Zonotrichia capensis",
+    "nombreComun": "Afrechito",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1513,
+    "foto": "especies/zonotrichia_capensis.webp",
+    "credito": {
+      "autor": "Esteban Poveda",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/112061150",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2490717,
+    "nombreCientifico": "Turdus fuscater",
+    "nombreComun": "Mirla negra",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1433,
+    "foto": "especies/turdus_fuscater.webp",
+    "credito": {
+      "autor": "brewmaster",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/407969085",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 9597316,
+    "nombreCientifico": "Ochthoeca fumicolor",
+    "nombreComun": "Pitajo ahumado",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1343,
+    "foto": "especies/ochthoeca_fumicolor.webp",
+    "credito": {
+      "autor": "Christoph Moning",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/233308590",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2490542,
+    "nombreCientifico": "Grallaria quitensis",
+    "nombreComun": "Gralaria leonada (tororoi leonado)",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1315,
+    "foto": "especies/grallaria_quitensis.webp",
+    "credito": {
+      "autor": "cello caruso-turiello",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/498370315",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2485160,
+    "nombreCientifico": "Leptasthenura andicola",
+    "nombreComun": "Tijeral andino",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1286,
+    "foto": "especies/leptasthenura_andicola.webp",
+    "credito": {
+      "autor": "Biodiversity Heritage Library",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/565796",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2493890,
+    "nombreCientifico": "Cistothorus platensis",
+    "nombreComun": "Chercán de las vegas",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1015,
+    "foto": "especies/cistothorus_platensis.webp",
+    "credito": {
+      "autor": "Attila Steiner",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/107287092",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2491445,
+    "nombreCientifico": "Atlapetes pallidinucha",
+    "nombreComun": "Atlapetes cabeciblanco",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 952,
+    "foto": "especies/atlapetes_pallidinucha.webp",
+    "credito": {
+      "autor": "Christoph Moning",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/236930949",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2485064,
+    "nombreCientifico": "Cinclodes excelsior",
+    "nombreComun": "Cinclodes (chungüi) piquigrueso",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 888,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 2476875,
+    "nombreCientifico": "Metallura williami",
+    "nombreComun": "Metalura verde",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 863,
+    "foto": "especies/metallura_williami.webp",
+    "credito": {
+      "autor": "David Monroy R",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/64906600",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2491197,
+    "nombreCientifico": "Catamenia inornata",
+    "nombreComun": "Piquitodeoro grande",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 762,
+    "foto": "especies/catamenia_inornata.webp",
+    "credito": {
+      "autor": "Nick Moore",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/152071994",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2489177,
+    "nombreCientifico": "Notiochelidon murina",
+    "nombreComun": null,
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 696,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 2485105,
+    "nombreCientifico": "Schizoeaca fuliginosa",
+    "nombreComun": null,
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 473,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 5230680,
+    "nombreCientifico": "Diglossa humeralis",
+    "nombreComun": "Picaflor negro",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 384,
+    "foto": "especies/diglossa_humeralis.webp",
+    "credito": {
+      "autor": "Dave Wendelken",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/28564375",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 5230077,
+    "nombreCientifico": "Asthenes flammulata",
+    "nombreComun": "Canastero multilistado",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 357,
+    "foto": "especies/asthenes_flammulata.webp",
+    "credito": {
+      "autor": "Maryse",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/251862297",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 6087863,
+    "nombreCientifico": "Scytalopus opacus",
+    "nombreComun": "Churrín paramero",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 338,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 5232468,
+    "nombreCientifico": "Oxyura ferruginea",
+    "nombreComun": "Malvasía andina",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 315,
+    "foto": "especies/oxyura_ferruginea.webp",
+    "credito": {
+      "autor": "jose_balderrama",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/88672377",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2476805,
+    "nombreCientifico": "Chalcostigma herrani",
+    "nombreComun": "Colibrí de herrán",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 303,
+    "foto": "especies/chalcostigma_herrani.webp",
+    "credito": {
+      "autor": "Nelson Apolo",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/170857599",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2491193,
+    "nombreCientifico": "Catamenia homochroa",
+    "nombreComun": "Semillero paramero",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 298,
+    "foto": "especies/catamenia_homochroa.webp",
+    "credito": {
+      "autor": "Russ Ruffing",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/616354987",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 5230541,
+    "nombreCientifico": "Anisognathus igniventris",
+    "nombreComun": "Clarinero escarlata",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 280,
+    "foto": "especies/anisognathus_igniventris.webp",
+    "credito": {
+      "autor": "Nelson Apolo",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/119230449",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 5229120,
+    "nombreCientifico": "Bolborhynchus ferrugineifrons",
+    "nombreComun": "Periquito de los Nevados",
+    "grupo": "ave",
+    "estacionIds": [],
+    "categoriaAmenaza": "VU",
+    "registrosSector": 277,
+    "foto": "especies/bolborhynchus_ferrugineifrons.webp",
+    "credito": {
+      "autor": "Christoph Moning",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/236769396",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 7329877,
+    "nombreCientifico": "Hypericum laricifolium",
+    "nombreComun": "Bura bura del llano",
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 72,
+    "foto": "especies/hypericum_laricifolium.webp",
+    "credito": {
+      "autor": "osoandino",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/44982096",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 8130967,
+    "nombreCientifico": "Castilleja fissifolia",
+    "nombreComun": "Allpa wantuk",
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 57,
+    "foto": "especies/castilleja_fissifolia.webp",
+    "credito": {
+      "autor": "Sue Carnahan",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/471226241",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 4170522,
+    "nombreCientifico": "Gaultheria myrsinoides",
+    "nombreComun": "Capulincillo",
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 48,
+    "foto": "especies/gaultheria_myrsinoides.webp",
+    "credito": {
+      "autor": "Justyn Stahl",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/171811260",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 3107233,
+    "nombreCientifico": "Senecio formosus",
+    "nombreComun": "Tabacote morado",
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 34,
+    "foto": "especies/senecio_formosus.webp",
+    "credito": {
+      "autor": "ktmo1492",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/21836242",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 10824476,
+    "nombreCientifico": "Linochilus rupestris",
+    "nombreComun": "Algodoncillo de páramo",
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 25,
+    "foto": "especies/linochilus_rupestris.webp",
+    "credito": {
+      "autor": "Oscar",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/174003071",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 8314351,
+    "nombreCientifico": "Phlegmariurus crassus",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 22,
+    "foto": "especies/phlegmariurus_crassus.webp",
+    "credito": {
+      "autor": "Tomás Guerrero-Molina",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/336236518",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 4171081,
+    "nombreCientifico": "Disterigma empetrifolium",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 21,
+    "foto": "especies/disterigma_empetrifolium.webp",
+    "credito": {
+      "autor": "Ken-ichi Ueda",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/572057",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 3840130,
+    "nombreCientifico": "Gentianella selaginifolia",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 20,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 5281998,
+    "nombreCientifico": "Campylopus fragilis",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 17,
+    "foto": "especies/campylopus_fragilis.webp",
+    "credito": {
+      "autor": "Stefan Gey",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/467102227",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 10697037,
+    "nombreCientifico": "Linochilus schultzii",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 16,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 5283962,
+    "nombreCientifico": "Andreaea rupestris",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 14,
+    "foto": "especies/andreaea_rupestris.webp",
+    "credito": {
+      "autor": "Bentley Colwill",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/402203986",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 4219064,
+    "nombreCientifico": "Monticalia gelida",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 14,
+    "foto": "especies/monticalia_gelida.webp",
+    "credito": {
+      "autor": "Zac Peterson",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/214930805",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 4218607,
+    "nombreCientifico": "Monticalia vernicosa",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 14,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 3629001,
+    "nombreCientifico": "Myrrhidendron glaucescens",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 14,
+    "foto": "especies/myrrhidendron_glaucescens.webp",
+    "credito": {
+      "autor": "capepolly",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/52004280",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 3096721,
+    "nombreCientifico": "Oritrophium peruvianum",
+    "nombreComun": "Uña kushma",
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 14,
+    "foto": "especies/oritrophium_peruvianum.webp",
+    "credito": {
+      "autor": "Luis Salagaje",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/167844428",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 8083409,
+    "nombreCientifico": "Valeriana pilosa",
+    "nombreComun": "Arroz desabrido",
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 14,
+    "foto": "especies/valeriana_pilosa.webp",
+    "credito": {
+      "autor": "riteran",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/174189147",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 5281884,
+    "nombreCientifico": "Campylopus areodictyon",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 13,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 5282000,
+    "nombreCientifico": "Campylopus pittieri",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 13,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 3111221,
+    "nombreCientifico": "Monticalia vaccinioides",
+    "nombreComun": "Cubillín",
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 13,
+    "foto": "especies/monticalia_vaccinioides.webp",
+    "credito": {
+      "autor": "Nelson Espinosa-Ortega",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/502277975",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2675407,
+    "nombreCientifico": "Chorisodontium speciosum",
+    "nombreComun": null,
+    "grupo": "planta",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 12,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 2437777,
+    "nombreCientifico": "Microryzomys altissimus",
+    "nombreComun": "Ratón arrocero de altitud",
+    "grupo": "mamifero",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 3,
+    "foto": "especies/microryzomys_altissimus.webp",
+    "credito": {
+      "autor": "pablo_coronado1997",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/74221873",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2437871,
+    "nombreCientifico": "Reithrodontomys mexicanus",
+    "nombreComun": "Ratón cosechero centroamericano",
+    "grupo": "mamifero",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 2,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 2437596,
+    "nombreCientifico": "Echinoprocta rufescens",
+    "nombreComun": null,
+    "grupo": "mamifero",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1,
+    "foto": null,
+    "credito": null
+  },
+  {
+    "gbifKey": 2432352,
+    "nombreCientifico": "Eptesicus fuscus",
+    "nombreComun": "Murciélago moreno",
+    "grupo": "mamifero",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1,
+    "foto": "especies/eptesicus_fuscus.webp",
+    "credito": {
+      "autor": "Joe Bartok",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/11370649",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 11202631,
+    "nombreCientifico": "Lasiurus frantzii",
+    "nombreComun": "Murciélago migratorio rojizo de peters",
+    "grupo": "mamifero",
+    "estacionIds": [],
+    "categoriaAmenaza": "NE",
+    "registrosSector": 1,
+    "foto": "especies/lasiurus_frantzii.webp",
+    "credito": {
+      "autor": "Trevor Van Loon",
+      "licencia": "CC BY",
+      "enlace": "https://www.inaturalist.org/photos/165691457",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2432420,
+    "nombreCientifico": "Myotis keaysi",
+    "nombreComun": "Murcielaguito inca",
+    "grupo": "mamifero",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1,
+    "foto": "especies/myotis_keaysi.webp",
+    "credito": {
+      "autor": "JaguarGozandoSelva",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/123396102",
+      "fuente": "iNaturalist"
+    }
+  },
+  {
+    "gbifKey": 2439176,
+    "nombreCientifico": "Thomasomys aureus",
+    "nombreComun": "Ratón montañero acanelado",
+    "grupo": "mamifero",
+    "estacionIds": [],
+    "categoriaAmenaza": "LC",
+    "registrosSector": 1,
+    "foto": "especies/thomasomys_aureus.webp",
+    "credito": {
+      "autor": "jorgebrito",
+      "licencia": "CC BY-NC",
+      "enlace": "https://www.inaturalist.org/photos/29255612",
+      "fuente": "iNaturalist"
+    }
+  }
+]
