@@ -10,9 +10,23 @@ import MiniSearch from 'minisearch';
 import type { Consulta, Estacion, Fragmento, MotorBusqueda, ResultadoBusqueda } from '../dominio/modelo';
 import { normalizarTexto } from './normalizador';
 
-const BOOST_CAMPOS = { titulo: 2, palabrasClave: 3, texto: 1 };
-const BOOST_ESTACION = 1.5;
-const BOOST_ESTACION_NOMBRADA = 2;
+/** Ajustes de la búsqueda (calibrados con contenido.json real en B5). */
+export interface AjustesBusqueda {
+  campos: { titulo: number; palabrasClave: number; texto: number };
+  estacion: number;
+  estacionNombrada: number;
+  /** Peso por tema: el glosario son definiciones cortas que ganan por brevedad, no por contenido. */
+  tema: Partial<Record<Fragmento['tema'], number>>;
+  fuzzy: number;
+}
+
+export const AJUSTES_BUSQUEDA: AjustesBusqueda = {
+  campos: { titulo: 2, palabrasClave: 1.5, texto: 1 },
+  estacion: 1.5,
+  estacionNombrada: 2.5,
+  tema: { glosario: 0.5 },
+  fuzzy: 0.2,
+};
 
 const PALABRAS_VACIAS = new Set(
   ('a al algo como con cual cuales cuando de del donde el ella ellos en es esa ese eso esta estas este '
@@ -42,7 +56,10 @@ function estacionNombrada(texto: string, estaciones: Estacion[]): string | null 
   return nombres.find(([n]) => n && conEspacios.includes(` ${n} `))?.[1] ?? null;
 }
 
-export function crearMotorBusqueda(estaciones: Estacion[] = []): MotorBusqueda {
+export function crearMotorBusqueda(
+  estaciones: Estacion[] = [],
+  ajustes: AjustesBusqueda = AJUSTES_BUSQUEDA,
+): MotorBusqueda {
   let indice: MiniSearch<Fragmento> | null = null;
   let porId = new Map<string, Fragmento>();
 
@@ -66,15 +83,17 @@ export function crearMotorBusqueda(estaciones: Estacion[] = []): MotorBusqueda {
       if (!indice || !consulta.textoNormalizado.trim()) return [];
       const nombrada = estacionNombrada(consulta.textoNormalizado, estaciones);
       const impulso = (id: string): number => {
-        const estacionId = porId.get(id)?.estacionId;
-        if (!estacionId) return 1;
-        if (estacionId === nombrada) return BOOST_ESTACION_NOMBRADA;
-        return !nombrada && estacionId === consulta.estacionId ? BOOST_ESTACION : 1;
+        const f = porId.get(id);
+        const porTema = (f && ajustes.tema[f.tema]) ?? 1;
+        const estacionId = f?.estacionId;
+        if (!estacionId) return porTema;
+        if (estacionId === nombrada) return porTema * ajustes.estacionNombrada;
+        return porTema * (!nombrada && estacionId === consulta.estacionId ? ajustes.estacion : 1);
       };
       return indice
         .search(consulta.textoNormalizado, {
-          boost: BOOST_CAMPOS,
-          fuzzy: termino => (termino.length > 4 ? 0.2 : false),
+          boost: ajustes.campos,
+          fuzzy: termino => (termino.length > 4 ? ajustes.fuzzy : false),
           prefix: termino => termino.length > 3,
           combineWith: 'OR',
           boostDocument: id => impulso(String(id)),
