@@ -4,6 +4,7 @@
  */
 import {
   MotivoLimite,
+  Naturaleza,
   TipoRespuesta,
   type Consulta,
   type FiltroSeguridad,
@@ -20,9 +21,11 @@ export function crearFiltroSeguridad(reglas: ReglaSeguridad[], paquete: PaqueteC
       const regla = reglas.find(r => r.patrones.some(p => p.test(texto)));
       if (!regla) return null;
 
-      // Solo se cita la norma si existe en el paquete y está apta; si no, queda el mensaje fijo.
+      // Solo se cita si existe, está apto y ES una norma: si contenido.json cambia los ids, mejor
+      // el mensaje fijo sin cita que citar un texto que no es la norma.
       const apoyo = regla.fragmentoApoyoId
-        ? paquete.fragmentos.find(f => f.id === regla.fragmentoApoyoId && f.apto)
+        ? paquete.fragmentos.find(f =>
+            f.id === regla.fragmentoApoyoId && f.apto && f.naturaleza === Naturaleza.NORMA)
         : undefined;
 
       return {

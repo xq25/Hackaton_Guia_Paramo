@@ -137,4 +137,16 @@ export const CASOS: CasoPrueba[] = [
   { nombre: 'Sin evidencia: tema del páramo que no está en el guion',
     pregunta: '¿Cuántas truchas hay en las quebradas?', estacionId: 'aguacerales',
     esperado: { tipo: ABSTENCION, motivo: MotivoLimite.SIN_EVIDENCIA } },
+  // Coinciden en una sola palabra genérica con el guion ("había", "clave", "años", "parque"…)
+  ...[
+    '¿Había dinosaurios aquí?', '¿Cuál es la clave del wifi?', '¿Cuántos años tiene el universo?',
+    '¿Hay pingüinos en el parque?', '¿Qué es un agujero negro?', '¿Cómo se hace una arepa?',
+    '¿Dónde compro souvenirs?',
+  ].map((pregunta): CasoPrueba => ({
+    nombre: `Sin evidencia: ${pregunta}`, pregunta, estacionId: null,
+    esperado: { tipo: ABSTENCION, motivo: MotivoLimite.SIN_EVIDENCIA },
+  })),
+  { nombre: 'Fuera de tema: superlativo del mundo',
+    pregunta: '¿Cuál es el río más largo del mundo?', estacionId: null,
+    esperado: { tipo: ABSTENCION, motivo: MotivoLimite.FUERA_DE_TEMA } },
 ];
