@@ -6,14 +6,24 @@
 <title>ParamON · mapa</title>
 <style>/*__LEAFLET_CSS__*/</style>
 <style>
-  html, body, #mapa { margin: 0; padding: 0; width: 100%; height: 100%; background: #E8ECE6; }
+  html, body, #mapa { margin: 0; padding: 0; width: 100%; height: 100%; background: #DCE6DA; }
   .leaflet-container { font-family: sans-serif; }
+  .leaflet-top.leaflet-right { margin-top: 86px; margin-right: 6px; }
+  .leaflet-bottom.leaflet-right { margin-bottom: 138px; }
   .etiqueta-estacion {
-    background: #FFFFFF; color: #111111; border: 2px solid #1B1B1B; border-radius: 8px;
-    font-size: 15px; font-weight: 700; padding: 2px 6px; box-shadow: none;
+    background: rgba(255,255,255,0.94); color: #111111; border: 1.5px solid #1B1B1B; border-radius: 6px;
+    font-size: 12px; font-weight: 700; padding: 1px 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    white-space: nowrap;
   }
-  .etiqueta-estacion small { display: block; font-weight: 400; font-size: 11px; color: #3D3D3D; }
-  .leaflet-tooltip-top.etiqueta-estacion::before { border-top-color: #1B1B1B; }
+  .etiqueta-referencia {
+    background: rgba(253,240,221,0.92); color: #7C2D12; border: 1px solid #B45309; border-radius: 6px;
+    font-size: 11px; font-weight: 700; padding: 1px 5px; box-shadow: none;
+  }
+  .icono-caminante {
+    background: #1E3A8A; color: #FFFFFF; border: 2px solid #FFFFFF; border-radius: 999px;
+    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  }
 </style>
 <script>/*__LEAFLET_JS__*/</script>
 <script>/*__PMTILES_JS__*/</script>
@@ -23,8 +33,9 @@
 <div id="mapa"></div>
 <script>
 (function () {
-  var LIMITES = L.latLngBounds([4.85, -75.42], [4.96, -75.28]);
-  var COLOR_SIN_VISITAR = '#8A8A8A';
+  var LIMITES = L.latLngBounds([4.86, -75.40], [4.96, -75.30]);
+  var CENTRO_RUTA = [4.922, -75.353];
+  var COLOR_SIN_VISITAR = '#6B7280';
   var COLOR_VISITADA = '#15803D';
 
   function enviar(msg) {
@@ -33,12 +44,17 @@
   window.onerror = function (m) { enviar({ tipo: 'error', mensaje: String(m) }); };
 
   var mapa = L.map('mapa', {
-    zoomControl: true, attributionControl: true,
-    maxBounds: LIMITES.pad(0.5), minZoom: 11, maxZoom: 17,
-  }).fitBounds(LIMITES);
+    zoomControl: false,
+    attributionControl: true,
+    maxBounds: LIMITES.pad(0.35),
+    minZoom: 12,
+    maxZoom: 16,
+  }).setView(CENTRO_RUTA, 14);
+
+  L.control.zoom({ position: 'topright' }).addTo(mapa);
   mapa.attributionControl.setPrefix(false);
 
-  // ── Teselas: el archivo .pmtiles se lee por rangos a través de React Native ──
+  // ── Teselas .pmtiles leídas por rangos desde React Native ──
   var pendientes = {};
   var siguienteId = 1;
 
@@ -65,67 +81,130 @@
     var archivo = new pmtiles.PMTiles(FuentePuente);
     capaTeselas = protomapsL.leafletLayer({
       url: archivo, flavor: 'light', lang: 'es',
-      attribution: '© OpenStreetMap · Protomaps',
+      attribution: '© OSM · Protomaps (ubicación aprox.)',
     });
     capaTeselas.addTo(mapa);
   }
 
-  // ── Ruta, estaciones y puntos de referencia ──
+  // ── Sendero, estaciones, referencias y marcador del simulador ──
   var capaRuta = null;
+  var lineaGuia = null;
   var marcadores = {};
+  var coordsPorId = {};
   var hitos = [];
   var visitadas = {};
+  var marcadorCaminante = null;
+  var boundsEstaciones = null;
 
-  function estiloPin(id) {
+  function estiloPin(id, interpolada) {
     var v = !!visitadas[id];
-    return { radius: 13, weight: 3, color: '#1B1B1B', fillColor: v ? COLOR_VISITADA : COLOR_SIN_VISITAR, fillOpacity: 1 };
+    return {
+      radius: 11,
+      weight: 2.5,
+      dashArray: interpolada ? '3 3' : null,
+      color: '#111111',
+      fillColor: v ? COLOR_VISITADA : COLOR_SIN_VISITAR,
+      fillOpacity: 1,
+    };
   }
 
-  function dibujar(ruta, estaciones, referencias) {
+  function moverCaminante(estacionId, centrar) {
+    var coord = estacionId ? coordsPorId[estacionId] : null;
+    if (!coord) return;
+    if (!marcadorCaminante) {
+      var icono = L.divIcon({
+        className: '',
+        html: '<div class="icono-caminante" title="Posición simulada">🚶</div>',
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+      });
+      marcadorCaminante = L.marker(coord, { icon: icono, interactive: false, zIndexOffset: 900 }).addTo(mapa);
+    } else {
+      marcadorCaminante.setLatLng(coord);
+    }
+    if (centrar) {
+      var z = Math.max(mapa.getZoom(), 14);
+      mapa.setView(coord, z, { animate: true });
+    }
+  }
+
+  function dibujar(ruta, estaciones, referencias, simuladaId) {
     if (capaRuta) { capaRuta.remove(); capaRuta = null; }
+    if (lineaGuia) { lineaGuia.remove(); lineaGuia = null; }
     Object.keys(marcadores).forEach(function (k) { marcadores[k].remove(); });
     marcadores = {};
+    coordsPorId = {};
     hitos.forEach(function (h) { h.remove(); });
     hitos = [];
 
-    if (ruta) {
+    var tieneLineaReal = false;
+    if (ruta && Array.isArray(ruta.features)) {
+      tieneLineaReal = ruta.features.some(function (f) { return f.geometry && f.geometry.type !== 'Point'; });
+    }
+    if (tieneLineaReal) {
       capaRuta = L.geoJSON(ruta, {
         filter: function (f) { return f.geometry && f.geometry.type !== 'Point'; },
-        style: { color: '#14532D', weight: 5, opacity: 0.9, dashArray: '10 8' },
+        style: { color: '#14532D', weight: 4, opacity: 0.9 },
       }).addTo(mapa);
     }
 
-    var puntos = [];
     (referencias || []).forEach(function (r) {
       var h = L.circleMarker([r.lat, r.lon], {
-        radius: 7, weight: 2, color: '#B45309', fillColor: '#FDF0DD', fillOpacity: 1, interactive: false,
+        radius: 6, weight: 2, color: '#B45309', fillColor: '#FDF0DD', fillOpacity: 1, interactive: false,
       })
         .bindTooltip('⛰ ' + r.nombre, {
-          permanent: true, direction: 'bottom', offset: [0, 8], className: 'etiqueta-estacion',
+          permanent: true, direction: 'bottom', offset: [0, 6], className: 'etiqueta-referencia',
         })
         .addTo(mapa);
       hitos.push(h);
-      puntos.push([r.lat, r.lon]);
     });
 
-    estaciones.forEach(function (e) {
+    var puntosSendero = [];
+    estaciones.forEach(function (e, idx) {
       if (e.lat == null || e.lon == null) return;
-      var m = L.circleMarker([e.lat, e.lon], estiloPin(e.id))
-        .bindTooltip(e.nombre + (e.aproximada ? '<small>ubicación aproximada</small>' : ''), {
-          permanent: true, direction: 'top', offset: [0, -12], className: 'etiqueta-estacion',
+      var par = [e.lat, e.lon];
+      coordsPorId[e.id] = par;
+      puntosSendero.push(par);
+
+      // Alterna dirección izquierda/derecha para que las etiquetas nunca se pisen entre sí.
+      var dir = idx % 2 === 0 ? 'right' : 'left';
+      var dx = idx % 2 === 0 ? 12 : -12;
+      var textoPin = (idx + 1) + '. ' + e.nombre;
+
+      var m = L.circleMarker(par, estiloPin(e.id, e.interpolada))
+        .bindTooltip(textoPin, {
+          permanent: true, direction: dir, offset: [dx, 0], className: 'etiqueta-estacion',
         })
         .on('click', function () { enviar({ tipo: 'estacion', id: e.id }); })
         .addTo(mapa);
+      m._interpolada = !!e.interpolada;
       marcadores[e.id] = m;
-      puntos.push([e.lat, e.lon]);
     });
-    if (puntos.length > 1) mapa.fitBounds(L.latLngBounds(puntos).pad(0.25));
+
+    // Si aún no hay track GPS en ruta.geojson, traza línea punteada orientativa entre las 5 paradas.
+    if (!tieneLineaReal && puntosSendero.length > 1) {
+      lineaGuia = L.polyline(puntosSendero, {
+        color: '#14532D', weight: 3.5, opacity: 0.75, dashArray: '7 7', interactive: false,
+      }).addTo(mapa);
+      lineaGuia.bringToBack();
+    }
+
+    // Encuadra únicamente las 5 paradas del sendero (zoom cercano ~14, sin alejarse al cráter).
+    if (puntosSendero.length > 1) {
+      boundsEstaciones = L.latLngBounds(puntosSendero);
+      mapa.fitBounds(boundsEstaciones.pad(0.18), { maxZoom: 15 });
+    }
+
+    if (simuladaId) moverCaminante(simuladaId, false);
   }
 
   function actualizarVisitas(ids) {
     visitadas = {};
     (ids || []).forEach(function (id) { visitadas[id] = true; });
-    Object.keys(marcadores).forEach(function (id) { marcadores[id].setStyle(estiloPin(id)); });
+    Object.keys(marcadores).forEach(function (id) {
+      var m = marcadores[id];
+      m.setStyle(estiloPin(id, m._interpolada));
+    });
   }
 
   // ── Mensajes desde React Native ──
@@ -135,9 +214,13 @@
         visitadas = {};
         (msg.visitadas || []).forEach(function (id) { visitadas[id] = true; });
         if (msg.tieneTeselas) cargarTeselas();
-        dibujar(msg.ruta || null, msg.estaciones || [], msg.referencias || []);
+        dibujar(msg.ruta || null, msg.estaciones || [], msg.referencias || [], msg.simuladaId || null);
       } else if (msg.tipo === 'visitas') {
         actualizarVisitas(msg.visitadas);
+      } else if (msg.tipo === 'caminante') {
+        moverCaminante(msg.estacionId, !!msg.centrar);
+      } else if (msg.tipo === 'encuadrarRuta') {
+        if (boundsEstaciones) mapa.fitBounds(boundsEstaciones.pad(0.18), { maxZoom: 15, animate: true });
       } else if (msg.tipo === 'rangoOk') {
         var p = pendientes[msg.id]; delete pendientes[msg.id];
         if (p) p.resolve({ data: base64ABytes(msg.base64) });

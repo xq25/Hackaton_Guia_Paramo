@@ -1,6 +1,6 @@
 /**
- * Estilo común de ParamON (doc 06): alto contraste para sol fuerte, letra grande,
- * botones grandes para usar con guantes. A y B lo importan (solo lectura).
+ * Estilo común de ParamON (doc 06): alto contraste para sol fuerte y proporciones
+ * equilibradas para pantallas móviles compactas. A y B lo importan (solo lectura).
  * Regla: se agregan claves, no se quitan ni renombran sin OK de A y B.
  */
 
@@ -38,12 +38,12 @@ export const colores = {
 } as const;
 
 export const tipografia = {
-  titulo: 28,
-  subtitulo: 22,
-  cuerpo: 18,
-  pequeno: 15,
-  /** Interlineado recomendado para el cuerpo. */
-  interlineado: 26,
+  titulo: 22,
+  subtitulo: 18,
+  cuerpo: 15,
+  pequeno: 13,
+  /** Interlineado cómodo en pantallas de celular. */
+  interlineado: 22,
   pesoNormal: '400',
   pesoFuerte: '700',
 } as const;
@@ -51,19 +51,19 @@ export const tipografia = {
 export const espacio = {
   xs: 4,
   s: 8,
-  m: 16,
-  l: 24,
-  xl: 32,
+  m: 12,
+  l: 18,
+  xl: 24,
 } as const;
 
 export const tamanos = {
-  /** Alto mínimo de cualquier botón tocable (guantes). */
-  botonAlto: 56,
+  /** Alto cómodo y compacto de botones tocables. */
+  botonAlto: 46,
   /** Área mínima tocable de íconos. */
-  toqueMinimo: 48,
-  radio: 12,
-  radioHoja: 20,
-  bordeGrueso: 2,
+  toqueMinimo: 40,
+  radio: 10,
+  radioHoja: 18,
+  bordeGrueso: 1.5,
 } as const;
 
 export const tema = { colores, tipografia, espacio, tamanos } as const;
