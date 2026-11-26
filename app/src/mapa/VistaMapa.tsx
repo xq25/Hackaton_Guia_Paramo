@@ -6,7 +6,7 @@ import { colores, espacio, tamanos, tipografia } from '../pantallas/tema';
 import { bytesABase64 } from './base64';
 import { cargarRuta, crearLectorRangos, ubicarPmtiles } from './fuenteMapa';
 import { MAPA_HTML } from './mapaHtml.generado';
-import { estacionesDeRuta } from './ruta';
+import { estacionesDeRuta, referenciasDeRuta } from './ruta';
 
 export interface VistaMapaProps {
   estaciones: Estacion[];
@@ -75,12 +75,13 @@ export function VistaMapa({
       });
   }, [estaciones, rutaGeo]);
 
-  const hayPinesEnMapa = useMemo(
-    () => puntos.some((p) => p.lat != null && p.lon != null),
+  const referencias = useMemo(() => referenciasDeRuta(rutaGeo), [rutaGeo]);
+
+  const estacionesSinPin = useMemo(
+    () => puntos.filter((p) => p.lat == null || p.lon == null),
     [puntos]
   );
 
-  // Inicializa el mapa cuando tanto el WebView como los archivos locales están listos.
   useEffect(() => {
     if (!webListo || !recursosListos) return;
     enviar({
@@ -88,11 +89,11 @@ export function VistaMapa({
       tieneTeselas,
       ruta: rutaGeo,
       estaciones: puntos,
+      referencias,
       visitadas: estacionesVisitadasIds,
     });
-  }, [webListo, recursosListos, tieneTeselas, rutaGeo, puntos, estacionesVisitadasIds, enviar]);
+  }, [webListo, recursosListos, tieneTeselas, rutaGeo, puntos, referencias, estacionesVisitadasIds, enviar]);
 
-  // Refresca colores de pines cuando cambian las visitas.
   useEffect(() => {
     if (!webListo || !recursosListos) return;
     enviar({ tipo: 'visitas', visitadas: estacionesVisitadasIds });
@@ -148,37 +149,36 @@ export function VistaMapa({
         domStorageEnabled={false}
         style={estilos.webview}
       />
-      {recursosListos && !hayPinesEnMapa ? (
-        <View style={estilos.respaldoEstaciones} accessibilityLabel="Estaciones del recorrido">
+      {/* Aguacerales y Lunares aún no tienen coordenadas en OSM: barra rápida sin inventar ubicación */}
+      {recursosListos && estacionesSinPin.length > 0 ? (
+        <View style={estilos.respaldoEstaciones} accessibilityLabel="Estaciones sin coordenadas en mapa">
           <Text style={estilos.respaldoAviso}>
-            Estaciones del recorrido (posiciones pendientes de ruta.geojson):
+            Paradas sin posición en OSM (toca para abrir):
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={estilos.respaldoFila}>
-            {[...estaciones]
-              .sort((a, b) => a.orden - b.orden)
-              .map((e) => {
-                const visitada = visitadasSet.has(e.id);
-                return (
-                  <Pressable
-                    key={e.id}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Estación ${e.nombre}`}
-                    onPress={() => alSeleccionarEstacion(e.id)}
+            {estacionesSinPin.map((e) => {
+              const visitada = visitadasSet.has(e.id);
+              return (
+                <Pressable
+                  key={e.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Estación ${e.nombre}`}
+                  onPress={() => alSeleccionarEstacion(e.id)}
+                  style={[
+                    estilos.fichaEstacion,
+                    { borderColor: visitada ? colores.visitada : colores.borde },
+                  ]}
+                >
+                  <View
                     style={[
-                      estilos.fichaEstacion,
-                      { borderColor: visitada ? colores.visitada : colores.borde },
+                      estilos.puntoEstado,
+                      { backgroundColor: visitada ? colores.visitada : colores.sinVisitar },
                     ]}
-                  >
-                    <View
-                      style={[
-                        estilos.puntoEstado,
-                        { backgroundColor: visitada ? colores.visitada : colores.sinVisitar },
-                      ]}
-                    />
-                    <Text style={estilos.fichaTexto}>{e.nombre}</Text>
-                  </Pressable>
-                );
-              })}
+                  />
+                  <Text style={estilos.fichaTexto}>{e.nombre}</Text>
+                </Pressable>
+              );
+            })}
           </ScrollView>
         </View>
       ) : null}
@@ -193,7 +193,7 @@ const estilos = StyleSheet.create({
     position: 'absolute',
     left: espacio.m,
     right: espacio.m,
-    top: 88,
+    top: 102,
     backgroundColor: colores.fondo,
     borderRadius: tamanos.radio,
     borderWidth: tamanos.bordeGrueso,

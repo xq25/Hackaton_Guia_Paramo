@@ -23,7 +23,6 @@
 <div id="mapa"></div>
 <script>
 (function () {
-  // Recuadro del recorrido Brisas → Valle de las Tumbas (guía de A, tarea A4).
   var LIMITES = L.latLngBounds([4.85, -75.42], [4.96, -75.28]);
   var COLOR_SIN_VISITAR = '#8A8A8A';
   var COLOR_VISITADA = '#15803D';
@@ -71,9 +70,10 @@
     capaTeselas.addTo(mapa);
   }
 
-  // ── Ruta y estaciones ──
+  // ── Ruta, estaciones y puntos de referencia ──
   var capaRuta = null;
   var marcadores = {};
+  var hitos = [];
   var visitadas = {};
 
   function estiloPin(id) {
@@ -81,10 +81,12 @@
     return { radius: 13, weight: 3, color: '#1B1B1B', fillColor: v ? COLOR_VISITADA : COLOR_SIN_VISITAR, fillOpacity: 1 };
   }
 
-  function dibujar(ruta, estaciones) {
+  function dibujar(ruta, estaciones, referencias) {
     if (capaRuta) { capaRuta.remove(); capaRuta = null; }
     Object.keys(marcadores).forEach(function (k) { marcadores[k].remove(); });
     marcadores = {};
+    hitos.forEach(function (h) { h.remove(); });
+    hitos = [];
 
     if (ruta) {
       capaRuta = L.geoJSON(ruta, {
@@ -94,6 +96,18 @@
     }
 
     var puntos = [];
+    (referencias || []).forEach(function (r) {
+      var h = L.circleMarker([r.lat, r.lon], {
+        radius: 7, weight: 2, color: '#B45309', fillColor: '#FDF0DD', fillOpacity: 1, interactive: false,
+      })
+        .bindTooltip('⛰ ' + r.nombre, {
+          permanent: true, direction: 'bottom', offset: [0, 8], className: 'etiqueta-estacion',
+        })
+        .addTo(mapa);
+      hitos.push(h);
+      puntos.push([r.lat, r.lon]);
+    });
+
     estaciones.forEach(function (e) {
       if (e.lat == null || e.lon == null) return;
       var m = L.circleMarker([e.lat, e.lon], estiloPin(e.id))
@@ -121,7 +135,7 @@
         visitadas = {};
         (msg.visitadas || []).forEach(function (id) { visitadas[id] = true; });
         if (msg.tieneTeselas) cargarTeselas();
-        dibujar(msg.ruta || null, msg.estaciones || []);
+        dibujar(msg.ruta || null, msg.estaciones || [], msg.referencias || []);
       } else if (msg.tipo === 'visitas') {
         actualizarVisitas(msg.visitadas);
       } else if (msg.tipo === 'rangoOk') {

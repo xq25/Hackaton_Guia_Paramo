@@ -7,8 +7,6 @@ import { Asset } from 'expo-asset';
 import { File, Paths, type FileHandle } from 'expo-file-system';
 import { RUTA_GEOJSON, ZONA_PMTILES } from './recursosMapa';
 
-/** Archivo de prueba local (no se commitea). Se copia con:
- *  adb push zona.prueba.pmtiles /sdcard/Android/data/co.uton.paramon/files/pruebas-locales/  */
 const NOMBRE_PRUEBA = 'zona.prueba.pmtiles';
 
 async function archivoDeAsset(modulo: number): Promise<File | null> {
@@ -17,10 +15,10 @@ async function archivoDeAsset(modulo: number): Promise<File | null> {
   return asset.localUri ? new File(asset.localUri) : null;
 }
 
-/** Devuelve el .pmtiles a usar o null si no hay (el mapa se muestra sin fondo). */
+/** Devuelve el .pmtiles empaquetado (S6) o el archivo de prueba local si existiera. */
 export async function ubicarPmtiles(): Promise<File | null> {
   try {
-    if (ZONA_PMTILES != null) return await archivoDeAsset(ZONA_PMTILES);
+    if (typeof ZONA_PMTILES === 'number') return await archivoDeAsset(ZONA_PMTILES);
     const candidatos = [
       new File(Paths.document, 'pruebas-locales', NOMBRE_PRUEBA),
       new File(Paths.cache, 'pruebas-locales', NOMBRE_PRUEBA),
@@ -31,12 +29,15 @@ export async function ubicarPmtiles(): Promise<File | null> {
   }
 }
 
-/** Lee ruta.geojson de A; null si aún no existe (antes de S6). */
+/** Lee ruta.geojson de A (tanto si Metro entrega id numérico de asset como objeto JSON en tests). */
 export async function cargarRuta(): Promise<unknown | null> {
   try {
     if (RUTA_GEOJSON == null) return null;
-    const archivo = await archivoDeAsset(RUTA_GEOJSON);
-    return archivo ? JSON.parse(await archivo.text()) : null;
+    if (typeof RUTA_GEOJSON === 'number') {
+      const archivo = await archivoDeAsset(RUTA_GEOJSON);
+      return archivo ? JSON.parse(await archivo.text()) : null;
+    }
+    return RUTA_GEOJSON;
   } catch {
     return null;
   }
