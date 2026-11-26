@@ -4,7 +4,7 @@
  */
 import {
   COLECCIONABLES_ESPECIE, INSIGNIAS, TipoColeccionable,
-  type Almacen, type Coleccionable, type CriterioInsignia, type Estacion, type Fragmento, type GestorProgreso,
+  type Almacen, type Coleccionable, type CriterioInsignia, type EspecieCatalogo, type Estacion, type Fragmento, type GestorProgreso,
   type Insignia, type MetodoRegistro, type PaqueteContenido, type ProgresoLocal,
 } from '../dominio/modelo';
 
@@ -24,6 +24,8 @@ export interface ProgresoJuego extends GestorProgreso {
   fragmento(id: string): Fragmento | undefined;
   /** Fragmentos que respaldan el texto de una carta (resuelve las referencias por página de modelo.ts). */
   fragmentosDeCarta(carta: Coleccionable): Fragmento[];
+  /** Entrada del catálogo de una carta de especie (para foto, crédito y categoría UICN). */
+  especieDeCarta(carta: Coleccionable, catalogo: EspecieCatalogo[]): EspecieCatalogo | undefined;
   estacionVisitada(progreso: ProgresoLocal, estacionId: string): boolean;
   /** Especie de la cuadrícula de una estación: se desbloquea al visitar cualquier estación que la tenga. */
   especieDesbloqueada(progreso: ProgresoLocal, nombreCientifico: string): boolean;
@@ -52,6 +54,19 @@ export function cartasEstacion(paquete: PaqueteContenido): Coleccionable[] {
     requisito: { estacionId: e.id, visitasMinimas: 1 },
   }));
 }
+
+/**
+ * Especie del catálogo de cada carta (algunas cartas de modelo.ts no traen nombreCientifico).
+ * Mantener igual a CARTAS en scripts/generar_catalogo.py.
+ */
+export const CIENTIFICO_CARTA: Record<string, string> = {
+  frailejon: 'Espeletia hartwegiana',
+  pajonal: 'Paramochloa effusa',
+  coral_paramo: 'Andicolea colombiana',
+  condor: 'Vultur gryphus',
+  danta: 'Tapirus pinchaque',
+  periquito: 'Bolborhynchus ferrugineifrons',
+};
 
 /** Términos extra con que el guion nombra a cada especie de carta. */
 const ALIAS_CARTA: Record<string, string[]> = {
@@ -192,6 +207,10 @@ export function crearGestorProgreso(deps: {
     insignias: () => INSIGNIAS,
     fragmento: (id: string) => fragmentos.get(id),
     fragmentosDeCarta: (carta: Coleccionable) => resolverFragmentosCarta(carta, paquete),
+    especieDeCarta: (carta, catalogo) => {
+      const nombre = carta.nombreCientifico ?? CIENTIFICO_CARTA[carta.id];
+      return nombre ? catalogo.find(e => e.nombreCientifico === nombre) : undefined;
+    },
     estacionVisitada: (progreso, estacionId) => progreso.visitas.some(v => v.estacionId === estacionId),
     especieDesbloqueada: (progreso, nombreCientifico) =>
       paquete.estaciones.some(e => e.especies.includes(nombreCientifico) && progreso.visitas.some(v => v.estacionId === e.id)),

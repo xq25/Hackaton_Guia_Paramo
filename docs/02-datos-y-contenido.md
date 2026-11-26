@@ -44,7 +44,7 @@ Reglas:
 - Respetar los límites de iNaturalist: ~1 petición/segundo, cabecera `User-Agent` genérica de la app.
 - **Nunca guardar coordenadas de especies CR/EN/VU**. Para el resto, el prototipo no guarda coordenadas de ocurrencias (no las necesitamos).
 - Si no hay red o falla: la app arranca igual. El álbum principal (11 cartas) usa sus imágenes empaquetadas; el catálogo complementario muestra "Sin descargar".
-- **Semilla empaquetada** (siempre): `scripts/descargar_gbif.py` genera `catalogo.json` + imágenes de las especies de las estaciones y las 6 cartas, y van dentro del APK. El reto prohíbe descargar durante la demo, así que la app debe verse completa sin el primer arranque.
+- **Semilla empaquetada** (siempre): `scripts/generar_catalogo.py` genera `catalogo.json` + imágenes de las especies de las estaciones y las 6 cartas, y van dentro del APK. El reto prohíbe descargar durante la demo, así que la app debe verse completa sin el primer arranque.
 
 ### Forma del catálogo (en el celular)
 

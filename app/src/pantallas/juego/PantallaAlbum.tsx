@@ -64,18 +64,23 @@ function Miniatura({ carta, desbloqueada }: { carta: Coleccionable; desbloqueada
 }
 
 function Carta({ carta, progreso, catalogo, alCerrar }: { carta: Coleccionable; progreso: ProgresoJuego; catalogo: EspecieCatalogo[]; alCerrar: () => void }) {
-  const especie = carta.nombreCientifico ? catalogo.find(e => e.nombreCientifico === carta.nombreCientifico) : undefined;
+  const especie = progreso.especieDeCarta(carta, catalogo);
   const fragmentos = progreso.fragmentosDeCarta(carta);
   const amenaza = carta.categoriaAmenaza ?? especie?.categoriaAmenaza ?? null;
   const credito = carta.credito ?? especie?.credito ?? null;
-  const fuente = imagenDe(carta.imagen) ?? imagenDe(especie?.foto);
+  // La foto de una carta de especie es la del catálogo: solo se muestra si hay crédito (atribución obligatoria)
+  const fuente = carta.tipo === TipoColeccionable.ESPECIE
+    ? (credito ? imagenDe(especie?.foto) : undefined)
+    : imagenDe(carta.imagen);
   const guion = (id: string) => progreso.paquete.guiones.find(g => g.id === id)?.titulo ?? id;
 
   return (
     <ScrollView style={s.pantalla} contentContainerStyle={s.carta}>
       {fuente ? <Image source={fuente} style={s.imagen} /> : <View style={[s.imagen, s.miniVacia]}><Text style={s.miniTexto}>{carta.nombre.charAt(0)}</Text></View>}
       <Text style={s.cartaNombre}>{carta.nombre}</Text>
-      {carta.nombreCientifico && <Text style={s.cientifico}>{carta.nombreCientifico}</Text>}
+      {(carta.nombreCientifico ?? especie?.nombreCientifico) && (
+        <Text style={s.cientifico}>{carta.nombreCientifico ?? especie?.nombreCientifico}</Text>
+      )}
       {carta.tipo === TipoColeccionable.ESPECIE && amenaza && (
         <Text style={[s.etiqueta, ['CR', 'EN', 'VU'].includes(amenaza) && s.amenazada]}>
           {NOMBRE_AMENAZA[amenaza]} · Fuente: GBIF

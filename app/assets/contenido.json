@@ -76,7 +76,7 @@
         "Cerdocyon thous",
         "Puma concolor",
         "Anas andium",
-        "Calamagrostis effusa",
+        "Paramochloa effusa",
         "Diplostephium eriophorum",
         "Espeletia hartwegiana",
         "Senecio niveoaureus"
@@ -113,8 +113,8 @@
         "Sylvilagus andinus",
         "Leopardus tigrinus",
         "Geranoaetus melanoleucus",
-        "Calamagrostis effusa",
-        "Loricaria colombiana",
+        "Paramochloa effusa",
+        "Andicolea colombiana",
         "Plantago rigida"
       ],
       "ubicacion": null,
@@ -147,8 +147,8 @@
       "especies": [
         "Vultur gryphus",
         "Geranoaetus melanoleucus",
-        "Calamagrostis effusa",
-        "Loricaria colombiana"
+        "Paramochloa effusa",
+        "Andicolea colombiana"
       ],
       "ubicacion": null,
       "radioDesbloqueoM": 80,

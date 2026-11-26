@@ -165,10 +165,10 @@ especies:
   - { comun: Zorro, cientifico: Cerdocyon thous, grupo: mamifero, alias: [zorro], validar: true }
   - { comun: Pato andino, cientifico: Anas andium, grupo: ave, alias: [pato], validar: true }
   - { comun: Tigrillo, cientifico: Leopardus tigrinus, grupo: mamifero, alias: [tigrillo, huellas de tigrillo], validar: true }
-  - { comun: Pajonal (paja de páramo), cientifico: Calamagrostis effusa, grupo: planta, alias: [pajonal], validar: true }
+  - { comun: Pajonal (paja de páramo), cientifico: Paramochloa effusa, grupo: planta, alias: [pajonal], validar: true }  # Antes Calamagrostis effusa (nombre aceptado hoy en GBIF e iNaturalist)
   - { comun: Romero de páramo, cientifico: Diplostephium eriophorum, grupo: planta, alias: [romero], validar: true }
   - { comun: Senecio, cientifico: Senecio niveoaureus, grupo: planta, alias: [senecio], validar: true }
-  - { comun: Coral de páramo, cientifico: Loricaria colombiana, grupo: planta, alias: [loricaria, coral de paramo, cacho de venado], validar: true }  # UTON p. 9: loricaria = coral de páramo
+  - { comun: Coral de páramo, cientifico: Andicolea colombiana, grupo: planta, alias: [loricaria, coral de paramo, cacho de venado], validar: true }  # UTON p. 9: loricaria = coral de páramo. Antes Loricaria colombiana
   - { comun: Colchón de agua, cientifico: Plantago rigida, grupo: planta, alias: [colchon de agua, colchones de agua], validar: true }
   # Cartas del álbum sin estación en las tablas
   - { comun: Periquito de los Nevados, cientifico: Bolborhynchus ferrugineifrons, grupo: ave, alias: [], validar: false }

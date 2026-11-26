@@ -86,7 +86,7 @@ Cada vez que regeneras `contenido.json`, menciona si cambió algún id de fragme
 - Naturaleza: cifras con año → `DATO_FECHADO` + `fechaDato`; leyendas y Kumanday → `TRADICION_ORAL`; prohibiciones (dunas, sendero, ascenso) → `NORMA`.
 
 ### A3 · Catálogo semilla (GBIF + iNaturalist)
-- `scripts/descargar_gbif.py` (parte del anexo de `docs/referencia/gbif-nevados.md`): especies de `Estacion.especies` + las 6 cartas + las ~25 más registradas por grupo en el sector norte.
+- `scripts/generar_catalogo.py` (parte del anexo de `docs/referencia/gbif-nevados.md`): especies de `Estacion.especies` + las 6 cartas + las ~25 más registradas por grupo en el sector norte.
 - Por especie: `species/match` → `gbifKey`, `iucnRedListCategory`, nombre común en español.
 - Foto: `api.inaturalist.org/v1/taxa?q=<nombre>` → `default_photo`. Solo CC0 / CC BY / CC BY-NC; si no, `foto: null`. Máx. 1 petición/s.
 - Redimensionar a WebP 480 y 160 px con Pillow; generar `imagenes/indice.ts`.
@@ -102,8 +102,22 @@ Cada vez que regeneras `contenido.json`, menciona si cambió algún id de fragme
 
 ## Cómo pruebas
 
+Preparar una vez el entorno de Python (los scripts usan `scripts/.venv`, ignorado por git):
+
 ```powershell
-python scripts/generar_contenido.py
+python -m venv scripts/.venv; scripts/.venv/Scripts/python -m pip install -r scripts/requirements.txt
+```
+
+Regenerar (en este orden; los dos últimos necesitan internet):
+
+```powershell
+scripts/.venv/Scripts/python scripts/generar_contenido.py
+```
+```powershell
+scripts/.venv/Scripts/python scripts/generar_catalogo.py
+```
+```powershell
+scripts/.venv/Scripts/python scripts/extraer_mapa.py
 ```
 
 - Abrir el JSON y buscar a mano los fragmentos de las preguntas del jurado.
