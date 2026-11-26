@@ -2,7 +2,8 @@
  * Punto de entrada del asistente. ÚNICO archivo de esta carpeta que importa Dev C.
  *
  * B0 (stub): la firma es la definitiva; el comportamiento es de mentira.
- * - responder(): primer fragmento apto de la estación como RESPALDO_SIN_MODELO, con su cita.
+ * - responder(): normaliza y pasa el filtro de seguridad (B2); si no coincide ninguna regla,
+ *   primer fragmento apto de la estación como RESPALDO_SIN_MODELO, con su cita.
  * - fichas: desbloquear compara en texto plano; lo demás no hace nada.
  * La firma de este archivo no cambia sin OK de C (docs/tareas/dev-b-asistente.md).
  */
@@ -10,10 +11,8 @@ import {
   MotivoLimite,
   TipoRespuesta,
   type Almacen,
-  type Cita,
   type ConfiguracionApp,
   type FichaContenido,
-  type Fragmento,
   type GestorFichas,
   type MotorModelo,
   type Nivel,
@@ -21,6 +20,10 @@ import {
   type PaqueteContenido,
   type Respuesta,
 } from '../dominio/modelo';
+import { citarFragmento } from './citas';
+import { crearFiltroSeguridad } from './filtroSeguridad';
+import { crearNormalizador } from './normalizador';
+import { REGLAS } from './reglas';
 
 export interface Asistente {
   orquestador: OrquestadorRespuestas;   // responder(texto, estacionId, nivel)
@@ -38,14 +41,8 @@ export function crearAsistente(deps: {
 }): Asistente {
   const { paquete, config } = deps;
 
-  const citar = (f: Fragmento): Cita => ({
-    guionTitulo: paquete.guiones.find(g => g.id === f.guionId)?.titulo ?? f.guionId,
-    pagina: f.pagina,
-    estacionNombre: f.estacionId
-      ? paquete.estaciones.find(e => e.id === f.estacionId)?.nombre ?? null
-      : null,
-    naturaleza: f.naturaleza,
-  });
+  const normalizador = crearNormalizador(paquete.sinonimos ?? []);
+  const filtro = crearFiltroSeguridad(REGLAS, paquete);
 
   const abstencion = (inicio: number): Respuesta => ({
     tipo: TipoRespuesta.ABSTENCION,
@@ -58,15 +55,19 @@ export function crearAsistente(deps: {
   });
 
   const orquestador: OrquestadorRespuestas = {
-    async responder(_texto: string, estacionId: string | null, _nivel: Nivel): Promise<Respuesta> {
+    async responder(texto: string, estacionId: string | null, nivel: Nivel): Promise<Respuesta> {
       const inicio = Date.now();
       try {
+        const consulta = normalizador.normalizar(texto, estacionId, nivel);
+        const limite = filtro.evaluar(consulta);
+        if (limite) return { ...limite, tiempoMs: Date.now() - inicio };
+
         const fragmento = paquete.fragmentos.find(f => f.apto && f.estacionId === estacionId);
         if (!fragmento) return abstencion(inicio);
         return {
           tipo: TipoRespuesta.RESPALDO_SIN_MODELO,
           texto: fragmento.texto,
-          citas: [citar(fragmento)],
+          citas: [citarFragmento(fragmento, paquete)],
           ampliable: false,
           advertencias: [],
           tiempoMs: Date.now() - inicio,
