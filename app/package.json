@@ -28,7 +28,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "eas-build-post-install": "node ./node_modules/llama.rn/install/download-native-artifacts.js"
   },
   "private": true,
   "allowScripts": {
