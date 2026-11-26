@@ -4,8 +4,9 @@
  *
  * Estado:
  * - orquestador: flujo completo (B2 filtro, B3 búsqueda/evidencia/citas, B5 prompt + modelo).
- * - modelo: si `deps.modelo` falta, por ahora no hay modelo y responde con el guion tal cual
- *   (RESPALDO_SIN_MODELO). motorModelo.ts (llama.rn) llega en B4.
+ * - modelo (B4): si `deps.modelo` falta, usa motorModelo.ts (llama.rn con config.rutaModelo).
+ *   Si el archivo no está o no carga, responde con el guion tal cual (RESPALDO_SIN_MODELO).
+ *   Los tests siempre inyectan un modelo falso: nunca cargan llama.rn.
  * - fichas (B6): contraseña con sha256, publicar/retirar reindexa sin reiniciar, persistencia
  *   en almacen['fichas.v1']. exportar/importar trabajan con el texto JSON (el archivo lo maneja
  *   la pantalla del editor).
@@ -20,6 +21,7 @@ import type {
 } from '../dominio/modelo';
 import { crearGestorFichas } from './fichas';
 import { crearMotorBusqueda } from './motorBusqueda';
+import { crearMotorModelo } from './motorModelo';
 import { conPlazo, crearOrquestador } from './orquestador';
 
 export interface Asistente {
@@ -37,7 +39,7 @@ export function crearAsistente(deps: {
   modelo?: MotorModelo;      // para tests; si falta, usa motorModelo.ts (llama.rn)
 }): Asistente {
   const { paquete, config } = deps;
-  const modelo = deps.modelo ?? null; // B4: ?? crearMotorModelo()
+  const modelo = deps.modelo ?? crearMotorModelo(); // llama.rn se carga recién al precargar
 
   // Fichas: el paquete activo = guion base + fichas aprobadas; publicar o retirar reindexa.
   const motor = crearMotorBusqueda(paquete.estaciones ?? []);
