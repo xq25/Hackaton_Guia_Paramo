@@ -6,17 +6,19 @@
  * - orquestador: flujo completo (B2 filtro, B3 búsqueda/evidencia/citas, B5 prompt + modelo).
  * - modelo: si `deps.modelo` falta, por ahora no hay modelo y responde con el guion tal cual
  *   (RESPALDO_SIN_MODELO). motorModelo.ts (llama.rn) llega en B4.
- * - fichas: stub hasta B6 (desbloquear compara en texto plano; lo demás no hace nada).
+ * - fichas (B6): contraseña con sha256, publicar/retirar reindexa sin reiniciar, persistencia
+ *   en almacen['fichas.v1']. exportar/importar trabajan con el texto JSON (el archivo lo maneja
+ *   la pantalla del editor).
  */
 import type {
   Almacen,
   ConfiguracionApp,
-  FichaContenido,
   GestorFichas,
   MotorModelo,
   OrquestadorRespuestas,
   PaqueteContenido,
 } from '../dominio/modelo';
+import { crearGestorFichas } from './fichas';
 import { crearMotorBusqueda } from './motorBusqueda';
 import { conPlazo, crearOrquestador } from './orquestador';
 
@@ -37,8 +39,15 @@ export function crearAsistente(deps: {
   const { paquete, config } = deps;
   const modelo = deps.modelo ?? null; // B4: ?? crearMotorModelo()
 
+  // Fichas: el paquete activo = guion base + fichas aprobadas; publicar o retirar reindexa.
   const motor = crearMotorBusqueda(paquete.estaciones ?? []);
-  motor.indexar(paquete.fragmentos);
+  const fichas = crearGestorFichas({
+    paqueteBase: paquete,
+    config,
+    almacen: deps.almacen,
+    alCambiar: activo => motor.indexar(activo.fragmentos),
+  });
+  motor.indexar(fichas.paqueteActivo().fragmentos);
 
   // ── Ciclo de vida del modelo: una sola carga a la vez; nunca lanza hacia C ──
   let cargando: Promise<boolean> | null = null;
@@ -63,26 +72,16 @@ export function crearAsistente(deps: {
   }
 
   const orquestador = crearOrquestador({
-    paquete: () => paquete,
+    paquete: fichas.paqueteActivo,
     config,
     motor,
     modeloListo,
   });
 
-  const fichas: GestorFichas = {
-    desbloquear: (contrasena: string) => contrasena === config.pinAdministracion,
-    validar: (_ficha: FichaContenido) => [],
-    guardarBorrador: async () => {},
-    activar: async () => {},
-    retirar: async () => {},
-    exportar: async () => '',
-    importar: async () => [],
-  };
-
   return {
     orquestador,
-    fichas,
-    versionGuion: () => paquete.version,
+    fichas: fichas.gestor,
+    versionGuion: fichas.versionGuion,
     precargarModelo: async () => { await cargar(); },
     liberarModelo: async () => {
       cargando = null;
