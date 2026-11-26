@@ -1,0 +1,8 @@
+[
+  { "gbifKey": 8286763, "nombreCientifico": "Espeletia hartwegiana", "nombreComun": "Frailejón", "grupo": "planta",
+    "estacionIds": ["aguacerales"], "categoriaAmenaza": null, "registrosSector": 168, "foto": null, "credito": null },
+  { "gbifKey": 2481907, "nombreCientifico": "Vultur gryphus", "nombreComun": "Cóndor de los Andes", "grupo": "ave",
+    "estacionIds": ["lunares", "valle_tumbas"], "categoriaAmenaza": "VU", "registrosSector": 257, "foto": null, "credito": null },
+  { "gbifKey": 2440899, "nombreCientifico": "Tapirus pinchaque", "nombreComun": "Danta de montaña", "grupo": "mamifero",
+    "estacionIds": ["aguacerales"], "categoriaAmenaza": "EN", "registrosSector": 1, "foto": null, "credito": null }
+]
