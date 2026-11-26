@@ -18,7 +18,8 @@
     },
     "plugins": [
       "expo-asset",
-      "llama.rn"
+      "llama.rn",
+      "./plugins/withAndroidArm64.js"
     ]
   }
 }
