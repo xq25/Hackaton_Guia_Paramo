@@ -4,17 +4,17 @@ import { advertencias, crearGeneradorCitas } from '../citas';
 import { crearEvaluadorEvidencia } from '../evaluadorEvidencia';
 import { crearFiltroSeguridad } from '../filtroSeguridad';
 import { crearMotorBusqueda } from '../motorBusqueda';
-import { crearNormalizador } from '../normalizador';
+import { crearNormalizador, vocabularioDominio } from '../normalizador';
 import { REGLAS } from '../reglas';
 import { CASOS } from './casos';
 import contenidoMini from './fixtures/contenido-mini.json';
 
-/** Calibrado con el fixture: respondibles ≥ 13.7, no respondibles ≤ 3.6. Se recalibra en B5. */
-const UMBRAL = 8;
+/** Mismo valor que config.ts (calibrado en B5 con contenido.json real). */
+const UMBRAL = 3;
 const MAX_FRAGMENTOS = 3;
 
 const paquete = contenidoMini as unknown as PaqueteContenido;
-const normalizador = crearNormalizador(paquete.sinonimos);
+const normalizador = crearNormalizador(paquete.sinonimos, vocabularioDominio(paquete));
 const filtro = crearFiltroSeguridad(REGLAS, paquete);
 const motor = crearMotorBusqueda(paquete.estaciones);
 motor.indexar(paquete.fragmentos);
@@ -116,7 +116,7 @@ describe('citas y advertencias', () => {
   });
 
   test('dato fechado con fecha → "Dato de 1985"', () => {
-    const f = paquete.fragmentos.find(x => x.id === 'uton2024-p10-3')!;
+    const f = paquete.fragmentos.find(x => x.id === 'uton2024-p10-4')!;
     expect(advertencias([f])).toEqual(['Dato de 1985']);
   });
 
