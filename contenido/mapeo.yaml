@@ -1,0 +1,250 @@
+# Mapeo de los guiones fuente → contenido.json
+# Lo lee scripts/generar_contenido.py. Dueño: Dev A.
+# Si cambias algo aquí, vuelve a correr el script y revisa que los ids de fragmento no cambien sin avisar a B.
+
+version: "2024.1"
+
+guiones:
+  - id: uton2024
+    archivo: fuentes/uton2024.md
+    titulo: Guion Ecoturístico UTON 2024
+    version: "2024"
+    totalPaginas: 57
+    fechaVersion: "2024"
+  - id: zona_norte
+    archivo: fuentes/zona_norte.md
+    titulo: Guion turístico zona norte
+    version: "1"
+    totalPaginas: 7
+    fechaVersion: "s.f."   # El documento no trae fecha (pendiente en decisiones.md)
+
+# Metadatos de estaciones. Copia de ESTACIONES en app/src/dominio/modelo.ts.
+# datosCuriososIds y especies los llena el script.
+estaciones:
+  - id: brisas
+    nombre: Brisas
+    alias: [Sector Brisas]
+    orden: 0
+    altitudMsnm: null
+    ecosistema: Páramo
+    conceptoCentral: Ubicación e importancia hídrica
+    icono: puerta
+    preguntasSugeridas:
+      - ¿Por qué es importante este parque para el agua?
+      - ¿Qué es el Complejo Volcánico Nevado del Ruiz?
+  - id: aguacerales
+    nombre: Aguacerales
+    alias: []
+    orden: 1
+    altitudMsnm: 4160
+    ecosistema: Páramo propiamente dicho
+    conceptoCentral: Génesis hídrica
+    icono: gota
+    preguntasSugeridas:
+      - ¿Qué papel cumple el frailejón en este lugar?
+      - ¿Por qué se llama Aguacerales?
+      - ¿Cómo atrapa el páramo el agua de la niebla?
+  - id: arenales
+    nombre: Arenales
+    alias: [Sector Arenales]
+    orden: 2
+    altitudMsnm: 4290
+    ecosistema: Transición páramo a superpáramo
+    conceptoCentral: Memoria y cambio climático
+    icono: reloj_arena
+    preguntasSugeridas:
+      - ¿Por qué debemos evitar pisar las dunas?
+      - ¿De dónde sale tanta arena?
+      - ¿Qué pasó con el esquí en el Nevado del Ruiz?
+  - id: lunares
+    nombre: Lunares
+    alias: [Valle Lunar]
+    orden: 3
+    altitudMsnm: 4350
+    ecosistema: Superpáramo
+    conceptoCentral: Fuerzas geológicas
+    icono: roca
+    preguntasSugeridas:
+      - ¿Qué proceso explica las fracturas y cuál explica el color?
+      - ¿Por qué se llama Valle Lunar?
+      - ¿Qué es el coral de páramo?
+  - id: valle_tumbas
+    nombre: Valle de las Tumbas
+    alias: [Desierto de la Soledad]
+    orden: 4
+    altitudMsnm: 4460
+    ecosistema: Superpáramo con transición a zona nival
+    conceptoCentral: Respeto y riesgo
+    icono: advertencia
+    preguntasSugeridas:
+      - ¿De dónde viene el nombre Kumanday?
+      - ¿Por qué no se puede subir más allá de este punto?
+      - ¿Por qué se llama Valle de las Tumbas?
+
+# Secciones: el script busca, del encabezado más profundo al más general, la primera regla
+# cuyo patrón (regex, sin distinguir mayúsculas) coincide. Toda sección debe tener regla.
+# Campos: tema, estacion, nivel (breve|ampliado), naturaleza, apto, omitir.
+secciones:
+  # ── Guion UTON 2024 ──
+  - { guion: uton2024, encabezado: '^GUION ECOTURÍSTICO$', omitir: true }
+  - { guion: uton2024, encabezado: '^Agradecimientos$', omitir: true }
+  - { guion: uton2024, encabezado: '^Introducción$', tema: introduccion, nivel: breve }
+  - { guion: uton2024, encabezado: '^1\. Aguacerales$', tema: estacion, estacion: aguacerales, nivel: breve }
+  - { guion: uton2024, encabezado: '^2\. Arenales$', tema: estacion, estacion: arenales, nivel: breve }
+  - { guion: uton2024, encabezado: '^3\. Lunares$', tema: estacion, estacion: lunares, nivel: breve }
+  - { guion: uton2024, encabezado: '^4\. Valle de las tumbas$', tema: estacion, estacion: valle_tumbas, nivel: breve }
+  - { guion: uton2024, encabezado: '^GLOSARIO$', tema: glosario, nivel: breve }
+  - { guion: uton2024, encabezado: '^PROFUNDIZACIÓN GUION ECOTURÍSTICO$', omitir: true }
+  - { guion: uton2024, encabezado: '^1\. Aspectos Geológicos', tema: geologia, nivel: ampliado }
+  - { guion: uton2024, encabezado: '^2\. Aspectos Glaciológicos', tema: glaciologia, nivel: ampliado }
+  - { guion: uton2024, encabezado: '^3\. Aspectos Antropológicos', tema: cultura, nivel: ampliado }
+  - { guion: uton2024, encabezado: '^4\. Aspectos Biológicos', tema: biologia, nivel: ampliado }
+  - { guion: uton2024, encabezado: '^5\. Aspectos Climáticos', tema: clima, nivel: ampliado }
+  # Salud de altura: se conserva para el personal, NUNCA para responder a visitantes.
+  - { guion: uton2024, encabezado: '^6\. Aspectos Fisiopatológicos', tema: salud_altura, nivel: ampliado, apto: false }
+  - { guion: uton2024, encabezado: '^Referencias Bibliográficas', omitir: true }
+
+  # ── Guion zona norte ──
+  - { guion: zona_norte, encabezado: '^1\. Introducción: Sector Brisas', tema: estacion, estacion: brisas, nivel: breve }
+  - { guion: zona_norte, encabezado: '^2\. Parada: Aguacerales', tema: estacion, estacion: aguacerales, nivel: breve }
+  - { guion: zona_norte, encabezado: '^3\. Parada: Sector Arenales', tema: estacion, estacion: arenales, nivel: breve }
+  - { guion: zona_norte, encabezado: '^4\. Parada: Valle Lunar', tema: estacion, estacion: lunares, nivel: breve }
+  - { guion: zona_norte, encabezado: '^5\. Parada Final: Valle de las Tumbas', tema: estacion, estacion: valle_tumbas, nivel: breve }
+  - { guion: zona_norte, encabezado: '^1\. La Identidad Ancestral', tema: cultura, nivel: breve }
+  - { guion: zona_norte, encabezado: '^2\. La Ciencia del Hielo', tema: glaciologia, nivel: breve }
+  - { guion: zona_norte, encabezado: '^3\. Una Realidad Inevitable', tema: glaciologia, nivel: breve }
+  - { guion: zona_norte, encabezado: '^4\. El Motor Climático', tema: clima, nivel: breve }
+  - { guion: zona_norte, encabezado: '^5\. La Vida en el Límite', tema: biologia, nivel: breve }
+  - { guion: zona_norte, encabezado: '^Introducción al Guion', tema: introduccion, nivel: breve }
+  - { guion: zona_norte, encabezado: '^Discurso:', tema: introduccion, nivel: breve }
+  - { guion: zona_norte, encabezado: '^Ficha Técnica General', tema: introduccion, nivel: breve }
+  - { guion: zona_norte, encabezado: '^Estructura de Estaciones', tema: introduccion, nivel: breve }
+  - { guion: zona_norte, encabezado: '^Los Nodos del Diagrama', omitir: true }        # Instrucciones de diagramación para guías
+  - { guion: zona_norte, encabezado: '^Recomendaciones para el Discurso', tema: buenas_practicas, nivel: breve }
+  - { guion: zona_norte, encabezado: '^Técnica de Memorización', omitir: true }      # Técnica para guías, no para visitantes
+  - { guion: zona_norte, encabezado: '^Guión turístico \(zona norte\)$', tema: introduccion, nivel: breve }
+
+# Naturaleza por contenido del texto. Se aplican en orden; gana la primera que coincide.
+# 'excepto' deja fuera fragmentos concretos (guion + página).
+naturaleza_por_texto:
+  # Relatos y nombres heredados por tradición oral (el reto exige distinguirlos de hechos)
+  - patron: 'Kumanday|Kumandai|Cumanday'
+    naturaleza: tradicion_oral
+    excepto: [{ guion: uton2024, pagina: 34 }]   # UTON p. 34 explica la incertidumbre: es el dato de contraste
+  - patron: 'Bachué|Iguaque|\bmito\b|leyenda|guaca|mohanes|niña fantasma|tunjos'
+    naturaleza: tradicion_oral
+    excepto: [{ guion: zona_norte, pagina: 7 }]   # Recomendación a guías de NO usar leyendas: no es un relato
+  - patron: 'heredado por tradición oral'
+    naturaleza: tradicion_oral
+  # Normas del recorrido
+  - patron: 'no deben ser intervenidas|está restringido|restricción de continuar|ascenso más allá de este punto está restringido'
+    naturaleza: norma
+
+# Datos con fecha (se muestran con su año, nunca como dato de hoy).
+# Además, el script marca DATO_FECHADO automáticamente los fragmentos de geología, glaciología y clima
+# que mencionan un año entre 2010 y 2029.
+datos_fechados:
+  - { guion: uton2024, pagina: 29, contiene: 'para el 2022', fecha: '2022' }
+  - { guion: zona_norte, pagina: 7, contiene: 'Alerta Amarilla', fecha: 's.f. (guion zona norte)' }
+
+# Nombres comunes de las tablas de cada estación (UTON pp. 5–10) → nombre científico.
+# validar: true = equivalencia propuesta por el equipo, NO viene del guion. Revisar con UTON.
+# Nombres que no aparecen aquí (musgo, pastos, líquenes, colibríes, venados, valeriana, mortiños)
+# se omiten a propósito: son grupos, no una especie identificable.
+especies:
+  - { comun: Frailejón, cientifico: Espeletia hartwegiana, grupo: planta, alias: [frailejon], validar: false }  # UTON p. 5
+  - { comun: Danta de montaña, cientifico: Tapirus pinchaque, grupo: mamifero, alias: [danta], validar: false }  # UTON p. 42
+  - { comun: Cóndor de los Andes, cientifico: Vultur gryphus, grupo: ave, alias: [condor], validar: false }
+  - { comun: Puma, cientifico: Puma concolor, grupo: mamifero, alias: [puma], validar: false }
+  - { comun: Conejo de páramo, cientifico: Sylvilagus andinus, grupo: mamifero, alias: [conejo], validar: true }
+  - { comun: Águila de páramo, cientifico: Geranoaetus melanoleucus, grupo: ave, alias: [aguila], validar: true }
+  - { comun: Cusumbo de montaña, cientifico: Nasuella olivacea, grupo: mamifero, alias: [cusumbo], validar: true }
+  - { comun: Taira, cientifico: Eira barbara, grupo: mamifero, alias: [taira], validar: true }
+  - { comun: Comadreja, cientifico: Neogale frenata, grupo: mamifero, alias: [comadreja], validar: true }
+  - { comun: Guagua loba, cientifico: Cuniculus taczanowskii, grupo: mamifero, alias: [guagua], validar: true }
+  - { comun: Zorro, cientifico: Cerdocyon thous, grupo: mamifero, alias: [zorro], validar: true }
+  - { comun: Pato andino, cientifico: Anas andium, grupo: ave, alias: [pato], validar: true }
+  - { comun: Tigrillo, cientifico: Leopardus tigrinus, grupo: mamifero, alias: [tigrillo, huellas de tigrillo], validar: true }
+  - { comun: Pajonal (paja de páramo), cientifico: Calamagrostis effusa, grupo: planta, alias: [pajonal], validar: true }
+  - { comun: Romero de páramo, cientifico: Diplostephium eriophorum, grupo: planta, alias: [romero], validar: true }
+  - { comun: Senecio, cientifico: Senecio niveoaureus, grupo: planta, alias: [senecio], validar: true }
+  - { comun: Coral de páramo, cientifico: Loricaria colombiana, grupo: planta, alias: [loricaria, coral de paramo, cacho de venado], validar: true }  # UTON p. 9: loricaria = coral de páramo
+  - { comun: Colchón de agua, cientifico: Plantago rigida, grupo: planta, alias: [colchon de agua, colchones de agua], validar: true }
+  # Cartas del álbum sin estación en las tablas
+  - { comun: Periquito de los Nevados, cientifico: Bolborhynchus ferrugineifrons, grupo: ave, alias: [], validar: false }
+
+# Equivalencias para la búsqueda (B normaliza tildes y mayúsculas).
+sinonimos:
+  - { termino: roca, equivalentes: [piedra, piedras, rocas, peñasco, peñascos] }
+  - { termino: glaciar, equivalentes: [hielo, nieve, glaciares, nevado] }
+  - { termino: volcán, equivalentes: [volcan, ruiz, nevado del ruiz, cráter, crater] }
+  - { termino: frailejón, equivalentes: [frailejon, frailejones, espeletia] }
+  - { termino: duna, equivalentes: [dunas, arena, arenas, arenal] }
+  - { termino: lahar, equivalentes: [lahares, avalancha, avalanchas, flujo de lodo, lodo] }
+  - { termino: gelifracción, equivalentes: [gelifraccion, congelamiento, crioclastia, fracturas, grietas, se rompen] }
+  - { termino: oxidación, equivalentes: [oxidacion, óxido, oxido, rojizo, rojizas, color rojo] }
+  - { termino: lunares, equivalentes: [valle lunar, lunar] }
+  - { termino: valle de las tumbas, equivalentes: [tumbas, desierto de la soledad] }
+  - { termino: kumanday, equivalentes: [cumanday, kumandai] }
+  - { termino: agua, equivalentes: [hídrico, hidrico, ríos, rios, niebla] }
+  - { termino: cóndor, equivalentes: [condor, condores] }
+  - { termino: danta, equivalentes: [tapir, dantas, danta de montaña] }
+  - { termino: loricaria, equivalentes: [coral de páramo, coral de paramo, cacho de venado] }
+  - { termino: necromasa, equivalentes: [hojas secas, hojas muertas, chaqueta] }
+  - { termino: pubescencia, equivalentes: [pelitos, pelos, vellosidades, peludas] }
+  - { termino: laguna, equivalentes: [lago, lagunas, bañarse] }
+  - { termino: páramo, equivalentes: [paramo, páramos, paramos] }
+  - { termino: esquí, equivalentes: [esqui, esquiar, ski] }
+
+# Diferencias entre fuentes. Cada selector puede devolver varios fragmentos.
+diferencias:
+  - id: kumanday
+    tema: Origen y significado del nombre Kumanday
+    nota: >-
+      El Guion turístico zona norte (p. 1) propone traducciones como 'Cerro Blanco', 'El de la Nariz Humeante'
+      o 'Padre Blanco'. El Guion Ecoturístico UTON 2024 (p. 34) advierte que no existe suficiente investigación
+      para delimitar la procedencia y el significado de la palabra. Las traducciones deben presentarse como
+      tradición oral, no como un hecho comprobado.
+    fragmentos:
+      - { guion: zona_norte, pagina: 1, contiene: 'Cerro Blanco' }
+      - { guion: zona_norte, pagina: 2, contiene: 'Cerro Blanco' }
+      - { guion: uton2024, pagina: 34, contiene: 'no existe la suficiente investigación' }
+
+# Un reto por estación interpretativa (D15). 'fragmento' es un selector: debe resolver a un fragmento.
+retos:
+  - id: reto_aguacerales
+    estacion: aguacerales
+    pregunta: ¿Cómo se llama la "chaqueta" de hojas muertas que protege al frailejón del frío?
+    opciones: [Necromasa, Pubescencia, Gelifracción]
+    correcta: 0
+    fragmento: { guion: uton2024, pagina: 5, contiene: 'necromasa' }
+  - id: reto_arenales
+    estacion: arenales
+    pregunta: ¿Por qué no se deben pisar las dunas de Arenales?
+    opciones:
+      - Porque las huellas pueden durar meses y las dunas son patrimonio geológico
+      - Porque la arena es tóxica
+      - Porque debajo hay grietas del glaciar
+    correcta: 0
+    fragmento: { guion: uton2024, pagina: 7, contiene: 'perdurar meses' }
+  - id: reto_lunares
+    estacion: lunares
+    pregunta: ¿Qué proceso rompe las rocas cuando el agua se congela dentro de sus grietas?
+    opciones: [Oxidación, Gelifracción, Erosión por el viento]
+    correcta: 1
+    fragmento: { guion: uton2024, pagina: 8, contiene: 'aumentar su volumen al congelarse' }
+  - id: reto_valle_tumbas
+    estacion: valle_tumbas
+    pregunta: ¿Cuál es la razón principal por la que no se puede subir más allá del Valle de las Tumbas?
+    opciones: [El riesgo de lahares, La falta de senderos, La protección de las dunas]
+    correcta: 0
+    fragmento: { guion: uton2024, pagina: 10, contiene: 'principalmente el riesgo de los lahares' }
+
+# Fragmentos que deben existir siempre (preguntas del jurado, docs/00-reto.md). Si falta uno, el script falla.
+obligatorios:
+  - { guion: uton2024, pagina: 5, contiene: 'frailejones' }
+  - { guion: uton2024, pagina: 7, contiene: 'dunas' }
+  - { guion: uton2024, pagina: 8, contiene: 'gelifracción' }
+  - { guion: uton2024, pagina: 8, contiene: 'oxidación' }
+  - { guion: uton2024, pagina: 34, contiene: 'Kumand' }
+  - { guion: zona_norte, pagina: 1, contiene: 'Kumanday' }
