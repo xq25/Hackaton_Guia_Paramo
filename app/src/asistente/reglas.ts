@@ -10,7 +10,8 @@
  *   pregunta por la razón ("¿por qué evitar pisar las dunas?"), que se responde con el guion.
  * - fragmentoApoyoId: si el guion trae la norma, se cita. Laguna y sendero no tienen norma
  *   escrita en los guiones: mensaje fijo sin cita (no inventar).
- *   ⚠ Los ids son los del fixture; revisar contra contenido.json real en B5.
+ *   Ids de contenido.json real (S5). Si cambian, no se cita nada: el filtro solo cita fragmentos
+ *   de tipo NORMA (ver filtroSeguridad.ts).
  */
 import { MotivoLimite, type ReglaSeguridad } from '../dominio/modelo';
 
@@ -86,7 +87,7 @@ export const REGLAS: ReglaSeguridad[] = [
       new RegExp(`${INTENCION}.*\\b(pisar|pisarlas|caminar|subir|subirme|jugar|correr|rodar|sentar|acostar|tirarme)\\b.*\\bdunas?\\b`),
     ],
     mensaje: `${REGLAS_VIGENTES} Esto dice el guion:`,
-    fragmentoApoyoId: 'uton2024-p7-3',
+    fragmentoApoyoId: 'uton2024-p7-dc4',
   },
   {
     id: 'restringida_ascenso',
@@ -95,7 +96,7 @@ export const REGLAS: ReglaSeguridad[] = [
       new RegExp(`${INTENCION}.*\\b(subir|ir|llegar|ascender|escalar|caminar)\\b.*\\b(crater|cumbre|cima|glaciar|nevado|arriba|volcan)\\b`),
     ],
     mensaje: `${REGLAS_VIGENTES} Esto dice el guion:`,
-    fragmentoApoyoId: 'uton2024-p10-2',
+    fragmentoApoyoId: 'uton2024-p10-3',
   },
   {
     id: 'restringida_extraer',
@@ -115,6 +116,7 @@ export const REGLAS: ReglaSeguridad[] = [
       /\botros? parques?\b/,
       /\b(tayrona|chingaza|purace|cocuy|sumapaz|amacayacu|iguaque|gorgona|farallones|katios|yellowstone|galapagos)\b/,
       /\b(capital de|presidente|futbol|receta|pelicula|cancion|chiste|horoscopo|bitcoin|tarea de)\b/,
+      /\bmas \w+ del mundo\b/,
     ],
     mensaje: 'Solo puedo responder sobre el recorrido Brisas – Valle de las Tumbas del PNN Los Nevados, con lo que dicen sus guiones. Para otros temas, pregúntale a tu guía.',
   },

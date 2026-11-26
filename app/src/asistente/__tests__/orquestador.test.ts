@@ -15,7 +15,7 @@ import contenidoMini from './fixtures/contenido-mini.json';
 const paquete = contenidoMini as unknown as PaqueteContenido;
 
 const config: ConfiguracionApp = {
-  rutaModelo: 'modelo-falso.gguf', umbralEvidencia: 8, maxFragmentos: 3, maxTokens: 200,
+  rutaModelo: 'modelo-falso.gguf', umbralEvidencia: 3, maxFragmentos: 3, maxTokens: 200,
   timeoutModeloMs: 80, pinAdministracion: '1234', idioma: 'es', geocercaActiva: false,
   alcanceRestriccion: AlcanceRestriccion.APP_COMPLETA, precisionMaximaM: 50,
   intervaloGpsMs: 10000, pinModoDemo: '0000',

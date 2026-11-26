@@ -17,7 +17,7 @@
     { "id": "arenales", "nombre": "Arenales", "alias": ["Sector Arenales"], "orden": 2, "altitudMsnm": 4290,
       "ecosistema": "Transición páramo a superpáramo", "conceptoCentral": "Memoria y cambio climático", "icono": "reloj_arena",
       "preguntasSugeridas": ["¿Por qué debemos evitar pisar las dunas?"], "imagen": "estaciones/arenales.webp",
-      "datosCuriososIds": ["uton2024-p7-3", "uton2024-p7-4"], "especies": [], "ubicacion": null, "radioDesbloqueoM": 80, "nfcTagIds": [] },
+      "datosCuriososIds": ["uton2024-p7-dc4", "uton2024-p7-4"], "especies": [], "ubicacion": null, "radioDesbloqueoM": 80, "nfcTagIds": [] },
     { "id": "lunares", "nombre": "Lunares", "alias": ["Valle Lunar"], "orden": 3, "altitudMsnm": 4350,
       "ecosistema": "Superpáramo", "conceptoCentral": "Fuerzas geológicas", "icono": "roca",
       "preguntasSugeridas": ["¿Qué proceso explica las fracturas y cuál explica el color?"], "imagen": "estaciones/lunares.webp",
@@ -69,7 +69,7 @@
       "apto": true, "origen": "guion"
     },
     {
-      "id": "uton2024-p7-3", "guionId": "uton2024", "pagina": 7, "estacionId": "arenales",
+      "id": "uton2024-p7-dc4", "guionId": "uton2024", "pagina": 7, "estacionId": "arenales",
       "tema": "estacion", "naturaleza": "norma", "nivel": "breve",
       "titulo": "No intervenir las dunas",
       "texto": "Las dunas entran en las zonas de carácter intangible del PNNN, son parte del patrimonio geológico. Debido a que estas dunas en algunas ocasiones tienen una alta carga de humedad, si son pisadas, las huellas pueden perdurar meses; por esta razón y por la particularidad de su formación no deben ser intervenidas.",
@@ -125,7 +125,7 @@
       "apto": true, "origen": "guion"
     },
     {
-      "id": "uton2024-p10-2", "guionId": "uton2024", "pagina": 10, "estacionId": "valle_tumbas",
+      "id": "uton2024-p10-3", "guionId": "uton2024", "pagina": 10, "estacionId": "valle_tumbas",
       "tema": "estacion", "naturaleza": "norma", "nivel": "breve",
       "titulo": "Ascenso restringido",
       "texto": "Por seguridad, el ascenso a la parte alta del Nevado del Ruiz está restringido debido al alto riesgo de lahares, flujos de lodo y escombros volcánicos que podrían dificultar la evacuación en caso de erupción.",
@@ -133,7 +133,7 @@
       "apto": true, "origen": "guion"
     },
     {
-      "id": "uton2024-p10-3", "guionId": "uton2024", "pagina": 10, "estacionId": "valle_tumbas",
+      "id": "uton2024-p10-4", "guionId": "uton2024", "pagina": 10, "estacionId": "valle_tumbas",
       "tema": "estacion", "naturaleza": "dato_fechado", "nivel": "ampliado",
       "titulo": "Erupción de 1985",
       "texto": "El 13 de noviembre de 1985, el volcán Nevado del Ruiz entró en erupción, provocando uno de los desastres volcánicos más catastróficos del siglo XX. El calor de la erupción derritió el glaciar del volcán, generando lahares que descendieron rápidamente por los cañones de los ríos y devastaron las poblaciones de Armero, Tolima, Villamaría y Chinchiná, causando la muerte de más de 23,000 personas.",

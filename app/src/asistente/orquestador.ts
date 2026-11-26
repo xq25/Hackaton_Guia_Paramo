@@ -25,7 +25,7 @@ import {
 import { advertencias, citarFragmento, crearGeneradorCitas } from './citas';
 import { crearEvaluadorEvidencia } from './evaluadorEvidencia';
 import { crearFiltroSeguridad } from './filtroSeguridad';
-import { crearNormalizador } from './normalizador';
+import { crearNormalizador, vocabularioDominio } from './normalizador';
 import { crearConstructorPrompt } from './prompt';
 import { REGLAS } from './reglas';
 
@@ -82,7 +82,8 @@ export function crearOrquestador(deps: DependenciasOrquestador): OrquestadorResp
     const inicio = Date.now();
     const paquete = deps.paquete();
 
-    const consulta = crearNormalizador(paquete.sinonimos ?? []).normalizar(texto, estacionId, nivel);
+    const consulta = crearNormalizador(paquete.sinonimos ?? [], vocabularioDominio(paquete))
+      .normalizar(texto, estacionId, nivel);
     const limite = crearFiltroSeguridad(REGLAS, paquete).evaluar(consulta);
     if (limite) return { ...limite, tiempoMs: Date.now() - inicio };
 
