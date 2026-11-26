@@ -133,7 +133,8 @@ export async function descargarModeloLocal(
       throw new Error('La descarga se interrumpió antes de completarse.');
     }
     if (destino.exists) destino.delete();
-    temporal.move(destino);
+    // En expo-file-system 58 move() y copy() son asíncronas: sin await la app busca el archivo antes de que exista.
+    await temporal.move(destino);
   } finally {
     tareaDescargaActiva = null;
   }
@@ -168,7 +169,7 @@ export async function importarModeloDesdeCelular(): Promise<boolean> {
 
   const destino = archivoInternoModelo();
   if (destino.exists) destino.delete();
-  origen.copy(destino);
+  await origen.copy(destino);
   return true;
 }
 
