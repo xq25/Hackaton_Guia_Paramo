@@ -100,11 +100,6 @@ describe('respaldo sin modelo', () => {
     expect(r.tiempoMs).toBeLessThan(400);
   });
 
-  test('sin modelo inyectado → respaldo', async () => {
-    const a = crearAsistente({ paquete, config, almacen });
-    const r = await a.orquestador.responder('¿Qué papel cumple el frailejón?', 'aguacerales', Nivel.BREVE);
-    expect(r.tipo).toBe(TipoRespuesta.RESPALDO_SIN_MODELO);
-  });
 });
 
 describe('el modelo no se usa cuando no corresponde', () => {

@@ -40,6 +40,20 @@ Las reglas viven en `app/src/asistente/reglas.ts` como datos (`ReglaSeguridad[]`
 
 El set de preguntas del jurado ([00-reto.md](00-reto.md)) se guarda como `app/src/asistente/__tests__/casos.ts` y se corre contra el orquestador sin modelo (búsqueda + reglas + citas). Cada caso fija `tipo` esperado y página citada.
 
+## Modelo en el celular (B4)
+
+`motorModelo.ts` carga con llama.rn el archivo de `CONFIG.rutaModelo` (contexto 2048, temperatura 0.2, CPU). Ruta acordada con C (`config.ts`):
+
+```powershell
+adb shell mkdir -p /sdcard/Android/data/co.uton.paramon/files/modelos
+adb push modelo.gguf /sdcard/Android/data/co.uton.paramon/files/modelos/modelo.gguf
+```
+
+- El archivo se llama siempre `modelo.gguf` (Gemma 4 E2B Q4; si no cabe o es lento, Qwen3.5-0.8B con el mismo nombre).
+- Desinstalar la app borra esa carpeta: hay que volver a copiarlo.
+- Si el archivo no está o no carga, el chat igual funciona: responde con el texto del guion (`RESPALDO_SIN_MODELO`) y su cita.
+- Para medir: la `Respuesta` trae `tiempoMs`. Anotar en `decisiones.md` la media con modelo (pregunta de Lunares) y sin modelo.
+
 ## Fuera del asistente
 
 GBIF/iNaturalist no se indexan ni se pasan al modelo. Si el visitante pregunta por una especie que solo está en el catálogo, el asistente se abstiene y la UI puede sugerir "Ver en el álbum".
