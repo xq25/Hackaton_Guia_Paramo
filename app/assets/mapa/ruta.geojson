@@ -1,0 +1,78 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "atribucion": "© OpenStreetMap contributors",
+    "nota": "Posiciones aproximadas tomadas de OpenStreetMap. No hay trazado del sendero todavía: no dibujar una línea inventada entre estaciones.",
+    "sinPosicion": [
+      "aguacerales",
+      "lunares"
+    ]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.3502095,
+          4.933596
+        ]
+      },
+      "properties": {
+        "tipo": "estacion",
+        "estacionId": "brisas",
+        "aproximada": true,
+        "fuente": "OpenStreetMap way/786352560 (Brisas - Parque de Los Nevados)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.3547997,
+          4.9192957
+        ]
+      },
+      "properties": {
+        "tipo": "estacion",
+        "estacionId": "arenales",
+        "aproximada": true,
+        "fuente": "OpenStreetMap node/8931612458 (Refugio Arenales)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.3561551,
+          4.9111111
+        ]
+      },
+      "properties": {
+        "tipo": "estacion",
+        "estacionId": "valle_tumbas",
+        "aproximada": true,
+        "fuente": "OpenStreetMap node/756614837 (Valle de las Tumbas)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.3178182,
+          4.8819399
+        ]
+      },
+      "properties": {
+        "tipo": "referencia",
+        "id": "crater_arenas",
+        "nombre": "Volcán Nevado del Ruiz (cráter Arenas)",
+        "aproximada": true,
+        "fuente": "OpenStreetMap node/1366302165"
+      }
+    }
+  ]
+}
