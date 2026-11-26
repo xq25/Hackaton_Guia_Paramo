@@ -25,6 +25,7 @@ Formato: una línea de decisión + por qué. Las nuevas van al final; si una cam
 | D19 | 2026-11-26 | El repo es **privado**; los guiones pueden vivir en `contenido/fuentes/` | Confirmado por el equipo |
 | D20 | 2026-11-26 | **NFC/QR y geocerca se posponen**. Orden de trabajo: **1) datos** (`contenido.json`, catálogo, mapa) → **2) asistente** con base al guion → **3) interfaz** (mapa + panel + chat) → 4) juego. Mientras tanto, las llegadas se registran solo con el botón de **modo demo** | Equipo: priorizar datos y asistente |
 | D21 | 2026-11-26 | **Rebalanceo**: A se queda con el juego (`juego/`, `pantallas/juego/`), B con la pantalla del editor de fichas (`pantallas/editor/`); C con base, estilo común, mapa, chat, navegación y APK | C era el cuello de botella; cada dev se queda con la UI de su propia lógica |
+| D22 | 2026-11-26 | **Calibración del asistente con `contenido.json` real (B5)**: `umbralEvidencia = 3`, `maxFragmentos = 3`; glosario con peso 0.5; si la pregunta coincide con el guion en **una sola palabra**, debe ser del vocabulario del páramo (sinónimos, glosario, estaciones, especies, nombres propios); corrección de ortografía solo en palabras de 7+ letras. Las reglas solo citan fragmentos de tipo `NORMA`. Medido en PC sin modelo: crear + indexar 53 ms, responder 1.7 ms de media (p95 5 ms) | Con el contenido real pasan los 41 casos (8 del jurado + variantes) sin responder preguntas ajenas al guion ("¿había dinosaurios aquí?" coincidía con "había"). Falta medir con el modelo en el celular |
 
 ## Pendientes (no inventar: conseguir el dato)
 

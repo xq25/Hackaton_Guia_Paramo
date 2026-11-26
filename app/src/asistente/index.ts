@@ -1,26 +1,32 @@
 /**
  * Punto de entrada del asistente. ÚNICO archivo de esta carpeta que importa Dev C.
- *
- * B0 (stub): la firma es la definitiva; el comportamiento es de mentira.
- * - responder(): primer fragmento apto de la estación como RESPALDO_SIN_MODELO, con su cita.
- * - fichas: desbloquear compara en texto plano; lo demás no hace nada.
  * La firma de este archivo no cambia sin OK de C (docs/tareas/dev-b-asistente.md).
+ *
+ * Estado:
+ * - orquestador: flujo completo (B2 filtro, B3 búsqueda/evidencia/citas, B5 prompt + modelo).
+ * - modelo (B4): si `deps.modelo` falta, usa motorModelo.ts (llama.rn con config.rutaModelo).
+ *   Si el archivo no está o no carga, responde con el guion tal cual (RESPALDO_SIN_MODELO).
+ *   Los tests siempre inyectan un modelo falso: nunca cargan llama.rn.
+ * - fichas (B6): contraseña con sha256, publicar/retirar reindexa sin reiniciar, persistencia
+ *   en almacen['fichas.v1']. exportar/importar trabajan con el texto JSON (el archivo lo maneja
+ *   la pantalla del editor).
  */
-import {
-  MotivoLimite,
-  TipoRespuesta,
-  type Almacen,
-  type Cita,
-  type ConfiguracionApp,
-  type FichaContenido,
-  type Fragmento,
-  type GestorFichas,
-  type MotorModelo,
-  type Nivel,
-  type OrquestadorRespuestas,
-  type PaqueteContenido,
-  type Respuesta,
+import type {
+  Almacen,
+  ConfiguracionApp,
+  Estacion,
+  FichaContenido,
+  Fragmento,
+  GestorFichas,
+  Guion,
+  MotorModelo,
+  OrquestadorRespuestas,
+  PaqueteContenido,
 } from '../dominio/modelo';
+import { crearGestorFichas } from './fichas';
+import { crearMotorBusqueda } from './motorBusqueda';
+import { crearMotorModelo } from './motorModelo';
+import { conPlazo, crearOrquestador } from './orquestador';
 
 export interface Asistente {
   orquestador: OrquestadorRespuestas;   // responder(texto, estacionId, nivel)
@@ -28,6 +34,17 @@ export interface Asistente {
   versionGuion(): string;               // versión del paquete + fichas activas
   precargarModelo(): Promise<void>;     // C la llama al abrir el chat
   liberarModelo(): Promise<void>;       // C la llama al ir a segundo plano
+  /** Solo para PantallaEditor (B7). Aditivo: C no necesita usarlo. */
+  editor: DatosEditor;
+}
+
+/** Lo que el editor de fichas necesita leer (siempre lo actual, tras publicar o importar). */
+export interface DatosEditor {
+  fichas(): FichaContenido[];
+  /** Fragmentos del guion original (aptos), para elegir cuál corregir. */
+  fragmentosGuion(): Fragmento[];
+  estaciones(): Estacion[];
+  guiones(): Guion[];
 }
 
 export function crearAsistente(deps: {
@@ -37,61 +54,61 @@ export function crearAsistente(deps: {
   modelo?: MotorModelo;      // para tests; si falta, usa motorModelo.ts (llama.rn)
 }): Asistente {
   const { paquete, config } = deps;
+  const modelo = deps.modelo ?? crearMotorModelo(); // llama.rn se carga recién al precargar
 
-  const citar = (f: Fragmento): Cita => ({
-    guionTitulo: paquete.guiones.find(g => g.id === f.guionId)?.titulo ?? f.guionId,
-    pagina: f.pagina,
-    estacionNombre: f.estacionId
-      ? paquete.estaciones.find(e => e.id === f.estacionId)?.nombre ?? null
-      : null,
-    naturaleza: f.naturaleza,
+  // Fichas: el paquete activo = guion base + fichas aprobadas; publicar o retirar reindexa.
+  const motor = crearMotorBusqueda(paquete.estaciones ?? []);
+  const fichas = crearGestorFichas({
+    paqueteBase: paquete,
+    config,
+    almacen: deps.almacen,
+    alCambiar: activo => motor.indexar(activo.fragmentos),
   });
+  motor.indexar(fichas.paqueteActivo().fragmentos);
 
-  const abstencion = (inicio: number): Respuesta => ({
-    tipo: TipoRespuesta.ABSTENCION,
-    texto: 'Eso no está en el guion. Pregúntale a tu guía o al personal del parque.',
-    citas: [],
-    motivo: MotivoLimite.SIN_EVIDENCIA,
-    ampliable: false,
-    advertencias: [],
-    tiempoMs: Date.now() - inicio,
+  // ── Ciclo de vida del modelo: una sola carga a la vez; nunca lanza hacia C ──
+  let cargando: Promise<boolean> | null = null;
+
+  function cargar(): Promise<boolean> {
+    if (!modelo) return Promise.resolve(false);
+    if (modelo.estaListo()) return Promise.resolve(true);
+    cargando ??= modelo.cargar(config.rutaModelo).then(
+      () => modelo.estaListo(),
+      () => { cargando = null; return false; }, // se reintenta en la próxima pregunta
+    );
+    return cargando;
+  }
+
+  async function modeloListo(plazoMs: number): Promise<MotorModelo | null> {
+    if (!modelo) return null;
+    try {
+      return (await conPlazo(cargar(), plazoMs)) ? modelo : null;
+    } catch {
+      return null; // no cargó a tiempo: esta respuesta va sin modelo, la carga sigue
+    }
+  }
+
+  const orquestador = crearOrquestador({
+    paquete: fichas.paqueteActivo,
+    config,
+    motor,
+    modeloListo,
   });
-
-  const orquestador: OrquestadorRespuestas = {
-    async responder(_texto: string, estacionId: string | null, _nivel: Nivel): Promise<Respuesta> {
-      const inicio = Date.now();
-      try {
-        const fragmento = paquete.fragmentos.find(f => f.apto && f.estacionId === estacionId);
-        if (!fragmento) return abstencion(inicio);
-        return {
-          tipo: TipoRespuesta.RESPALDO_SIN_MODELO,
-          texto: fragmento.texto,
-          citas: [citar(fragmento)],
-          ampliable: false,
-          advertencias: [],
-          tiempoMs: Date.now() - inicio,
-        };
-      } catch {
-        return abstencion(inicio); // responder() nunca lanza
-      }
-    },
-  };
-
-  const fichas: GestorFichas = {
-    desbloquear: (contrasena: string) => contrasena === config.pinAdministracion,
-    validar: (_ficha: FichaContenido) => [],
-    guardarBorrador: async () => {},
-    activar: async () => {},
-    retirar: async () => {},
-    exportar: async () => '',
-    importar: async () => [],
-  };
 
   return {
     orquestador,
-    fichas,
-    versionGuion: () => paquete.version,
-    precargarModelo: async () => {},
-    liberarModelo: async () => {},
+    fichas: fichas.gestor,
+    versionGuion: fichas.versionGuion,
+    editor: {
+      fichas: fichas.listar,
+      fragmentosGuion: () => (paquete.fragmentos ?? []).filter(f => f.apto),
+      estaciones: () => [...(paquete.estaciones ?? [])].sort((a, b) => a.orden - b.orden),
+      guiones: () => paquete.guiones ?? [],
+    },
+    precargarModelo: async () => { await cargar(); },
+    liberarModelo: async () => {
+      cargando = null;
+      try { await modelo?.liberar(); } catch { /* nunca lanza hacia C */ }
+    },
   };
 }

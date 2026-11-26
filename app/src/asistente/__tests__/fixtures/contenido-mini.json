@@ -1,0 +1,205 @@
+{
+  "version": "mini-2024.1",
+  "generadoEn": "2026-11-26",
+  "guiones": [
+    { "id": "uton2024", "titulo": "Guion Ecoturístico UTON 2024", "version": "2024", "totalPaginas": 57, "fechaVersion": "2024" },
+    { "id": "zona_norte", "titulo": "Guion turístico zona norte", "version": "1", "totalPaginas": 7, "fechaVersion": "" }
+  ],
+  "estaciones": [
+    { "id": "brisas", "nombre": "Brisas", "alias": ["Sector Brisas"], "orden": 0, "altitudMsnm": null,
+      "ecosistema": "Páramo", "conceptoCentral": "Ubicación e importancia hídrica", "icono": "puerta",
+      "preguntasSugeridas": ["¿Por qué es importante este parque para el agua?"], "imagen": "estaciones/brisas.webp",
+      "datosCuriososIds": [], "especies": [], "ubicacion": null, "radioDesbloqueoM": 80, "nfcTagIds": [] },
+    { "id": "aguacerales", "nombre": "Aguacerales", "alias": [], "orden": 1, "altitudMsnm": 4160,
+      "ecosistema": "Páramo propiamente dicho", "conceptoCentral": "Génesis hídrica", "icono": "gota",
+      "preguntasSugeridas": ["¿Qué papel cumple el frailejón en este lugar?"], "imagen": "estaciones/aguacerales.webp",
+      "datosCuriososIds": ["uton2024-p6"], "especies": ["Espeletia hartwegiana"], "ubicacion": null, "radioDesbloqueoM": 80, "nfcTagIds": [] },
+    { "id": "arenales", "nombre": "Arenales", "alias": ["Sector Arenales"], "orden": 2, "altitudMsnm": 4290,
+      "ecosistema": "Transición páramo a superpáramo", "conceptoCentral": "Memoria y cambio climático", "icono": "reloj_arena",
+      "preguntasSugeridas": ["¿Por qué debemos evitar pisar las dunas?"], "imagen": "estaciones/arenales.webp",
+      "datosCuriososIds": ["uton2024-p7-dc4", "uton2024-p7-4"], "especies": [], "ubicacion": null, "radioDesbloqueoM": 80, "nfcTagIds": [] },
+    { "id": "lunares", "nombre": "Lunares", "alias": ["Valle Lunar"], "orden": 3, "altitudMsnm": 4350,
+      "ecosistema": "Superpáramo", "conceptoCentral": "Fuerzas geológicas", "icono": "roca",
+      "preguntasSugeridas": ["¿Qué proceso explica las fracturas y cuál explica el color?"], "imagen": "estaciones/lunares.webp",
+      "datosCuriososIds": ["uton2024-p9"], "especies": [], "ubicacion": null, "radioDesbloqueoM": 80, "nfcTagIds": [] },
+    { "id": "valle_tumbas", "nombre": "Valle de las Tumbas", "alias": [], "orden": 4, "altitudMsnm": 4460,
+      "ecosistema": "Superpáramo con transición a zona nival", "conceptoCentral": "Respeto y riesgo", "icono": "advertencia",
+      "preguntasSugeridas": ["¿De dónde viene el nombre Kumanday?"], "imagen": "estaciones/valle_tumbas.webp",
+      "datosCuriososIds": [], "especies": [], "ubicacion": null, "radioDesbloqueoM": 80, "nfcTagIds": [] }
+  ],
+  "fragmentos": [
+    {
+      "id": "uton2024-p5", "guionId": "uton2024", "pagina": 5, "estacionId": "aguacerales",
+      "tema": "estacion", "naturaleza": "cientifico", "nivel": "breve",
+      "titulo": "Los páramos y el agua",
+      "texto": "El Parque Nacional Natural Los Nevados tiene cerca de 62.000 (62.142) hectáreas de las cuales protege aproximadamente 53,532 hectáreas de páramos, lo que corresponde al 86% del área protegida, abastece de agua a 37 municipios y beneficia a cerca de 3 millones de personas en la región del eje cafetero. Los páramos actúan como esponjas gigantes, regulando el suministro de agua y capturando carbono, lo que ayuda a mitigar el cambio climático.",
+      "palabrasClave": ["páramo", "agua", "esponja", "municipios", "carbono", "hectáreas"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p5-2", "guionId": "uton2024", "pagina": 5, "estacionId": "aguacerales",
+      "tema": "estacion", "naturaleza": "cientifico", "nivel": "ampliado",
+      "titulo": "Por qué se llama Aguacerales",
+      "texto": "En el sitio Aguacerales encontramos diversa vegetación. Estas plantas desempeñan un papel crucial en la captación y regulación del agua. La caída de agua que observamos y escuchamos no para, de allí el nombre de Aguacerales. El agua contenida en las nubes es capturada por la vegetación (condensación) y pasa a formar pequeñas gotas que descienden y llegan a los musgos que crecen sobre la roca; estas gotas se juntan formando hilos de agua que van formando un riachuelo que irá a la quebrada.",
+      "palabrasClave": ["aguacerales", "condensación", "nubes", "musgo", "riachuelo", "nombre"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p5-3", "guionId": "uton2024", "pagina": 5, "estacionId": "aguacerales",
+      "tema": "estacion", "naturaleza": "cientifico", "nivel": "breve",
+      "titulo": "El frailejón y sus adaptaciones",
+      "texto": "Los frailejones, como muchas plantas de páramo, han desarrollado adaptaciones, como hojas gruesas y vellosidades (pubescencia), para sobrevivir en este clima extremo; forman una chaqueta de materia muerta (necromasa) que les ayuda a protegerse de las inclementes condiciones del clima. Existen más de 100 especies de frailejones, en Colombia se tienen cerca de 60 de estas especies y para el PNNN se encuentra reportada únicamente la especie de frailejón Espeletia hartwegiana.",
+      "palabrasClave": ["frailejón", "necromasa", "pubescencia", "adaptación", "Espeletia hartwegiana"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p6", "guionId": "uton2024", "pagina": 6, "estacionId": "aguacerales",
+      "tema": "estacion", "naturaleza": "cientifico", "nivel": "ampliado",
+      "titulo": "Datos curiosos de Aguacerales",
+      "texto": "Las rocas que rodean la estación tienen cerca de 100 mil años, y se llaman andesitas (la roca más común de los Andes). El nombre genérico Espeletia fue nombrado en honor a José Manuel de Ezpeleta, el virrey del Nuevo Reino de Granada.",
+      "palabrasClave": ["andesitas", "rocas", "Espeletia", "Ezpeleta", "dato curioso"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p7", "guionId": "uton2024", "pagina": 7, "estacionId": "arenales",
+      "tema": "estacion", "naturaleza": "cientifico", "nivel": "breve",
+      "titulo": "Las dunas de Arenales",
+      "texto": "En esta estación hay una abundante acumulación de arena, conocida como dunas de arena, que son moldeadas y modeladas por el viento. Las dunas están sobre andesitas que tienen una edad aproximada de 100 mil años; se estima que estas dunas deben tener alrededor de unos 200 o 400 años, puesto que se forman posterior al retroceso glaciar en esta locación (se requieren estudios).",
+      "palabrasClave": ["dunas", "arena", "viento", "retroceso glaciar"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p7-dc4", "guionId": "uton2024", "pagina": 7, "estacionId": "arenales",
+      "tema": "estacion", "naturaleza": "norma", "nivel": "breve",
+      "titulo": "No intervenir las dunas",
+      "texto": "Las dunas entran en las zonas de carácter intangible del PNNN, son parte del patrimonio geológico. Debido a que estas dunas en algunas ocasiones tienen una alta carga de humedad, si son pisadas, las huellas pueden perdurar meses; por esta razón y por la particularidad de su formación no deben ser intervenidas.",
+      "palabrasClave": ["dunas", "pisar", "huellas", "intangible", "patrimonio geológico", "evitar"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p7-4", "guionId": "uton2024", "pagina": 7, "estacionId": "arenales",
+      "tema": "cultura", "naturaleza": "tradicion_oral", "nivel": "ampliado",
+      "titulo": "El mito de la niña fantasma",
+      "texto": "Hay un mito que viene desde los 80 sobre una niña fantasma; se dice que ella mora en este sector, y que diversos guías, guardaparques, montañistas y rescatistas la han visto.",
+      "palabrasClave": ["mito", "niña fantasma", "leyenda"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p8", "guionId": "uton2024", "pagina": 8, "estacionId": "lunares",
+      "tema": "estacion", "naturaleza": "cientifico", "nivel": "breve",
+      "titulo": "Gelifracción: por qué las rocas están fracturadas",
+      "texto": "Las grietas de las rocas se producen por el congelamiento y descongelamiento del agua; este proceso es conocido como gelifracción, un tipo de meteorización. El agua aumenta su volumen al congelarse; si está confinada a los poros o grietas previas de la roca, al congelarse la somete a un desgaste o fracturamiento por el aumento en su volumen. Por esta razón las rocas están llenas de grietas.",
+      "palabrasClave": ["gelifracción", "fracturas", "grietas", "meteorización física", "congelamiento"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p8-2", "guionId": "uton2024", "pagina": 8, "estacionId": "lunares",
+      "tema": "estacion", "naturaleza": "cientifico", "nivel": "breve",
+      "titulo": "Oxidación: por qué las rocas son rojizas",
+      "texto": "El color rojizo obedece a otro tipo de meteorización, de origen químico: las rocas están formadas por minerales, y los minerales por elementos químicos; algunos de estos elementos reaccionan con el oxígeno. En este caso la oxidación del hierro (almacenado en minerales como las hornblendas) deja en evidencia tonalidades rojizas sobre la roca.",
+      "palabrasClave": ["color", "rojizo", "oxidación", "hierro", "meteorización química", "hornblendas"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p9", "guionId": "uton2024", "pagina": 9, "estacionId": "lunares",
+      "tema": "estacion", "naturaleza": "cientifico", "nivel": "ampliado",
+      "titulo": "Datos curiosos de Lunares",
+      "texto": "Las loricarias son llamadas cacho de venado, o coral de páramo. Si pudiésemos viajar en el tiempo, unos 100 años atrás en esta estación no habría vegetación, y en unos 100 años seguramente esta estación tendría mucha más vegetación.",
+      "palabrasClave": ["loricaria", "coral de páramo", "cacho de venado", "vegetación pionera"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p9-2", "guionId": "uton2024", "pagina": 9, "estacionId": "valle_tumbas",
+      "tema": "estacion", "naturaleza": "cientifico", "nivel": "breve",
+      "titulo": "Por qué se llama Valle de las Tumbas",
+      "texto": "El sitio conocido como el Valle de las Tumbas recibe su nombre por la presencia de rocas largas y planas (lajas) que se asemejan a ataúdes. Algunas comunidades cercanas al PNNN usaban rocas con esta forma para construir tumbas de cancel (esto no quiere decir que fueran extraídas del Ruiz, es solo una similitud).",
+      "palabrasClave": ["valle de las tumbas", "nombre", "lajas", "ataúdes", "tumbas de cancel"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p10", "guionId": "uton2024", "pagina": 10, "estacionId": "valle_tumbas",
+      "tema": "cultura", "naturaleza": "cientifico", "nivel": "ampliado",
+      "titulo": "Un lugar sagrado",
+      "texto": "En la época precolombina, el área era un lugar sagrado para los indígenas Quimbayas, Carrapas, Gualíes, Panches, Ansermas y Pijaos, quienes realizaban peregrinaciones religiosas para rendir tributo a la montaña sagrada conocida como Kumanday. Hoy en día, algunas comunidades indígenas continúan realizando rituales en este lugar, que consideran sagrado.",
+      "palabrasClave": ["sagrado", "indígenas", "peregrinaciones", "Kumanday", "rituales"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p10-3", "guionId": "uton2024", "pagina": 10, "estacionId": "valle_tumbas",
+      "tema": "estacion", "naturaleza": "norma", "nivel": "breve",
+      "titulo": "Ascenso restringido",
+      "texto": "Por seguridad, el ascenso a la parte alta del Nevado del Ruiz está restringido debido al alto riesgo de lahares, flujos de lodo y escombros volcánicos que podrían dificultar la evacuación en caso de erupción.",
+      "palabrasClave": ["ascenso", "restringido", "cráter", "lahares", "subir", "cumbre"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p10-4", "guionId": "uton2024", "pagina": 10, "estacionId": "valle_tumbas",
+      "tema": "estacion", "naturaleza": "dato_fechado", "nivel": "ampliado",
+      "titulo": "Erupción de 1985",
+      "texto": "El 13 de noviembre de 1985, el volcán Nevado del Ruiz entró en erupción, provocando uno de los desastres volcánicos más catastróficos del siglo XX. El calor de la erupción derritió el glaciar del volcán, generando lahares que descendieron rápidamente por los cañones de los ríos y devastaron las poblaciones de Armero, Tolima, Villamaría y Chinchiná, causando la muerte de más de 23,000 personas.",
+      "palabrasClave": ["erupción", "1985", "Armero", "lahares", "tragedia"],
+      "fechaDato": "1985-11-13",
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p34", "guionId": "uton2024", "pagina": 34, "estacionId": null,
+      "tema": "cultura", "naturaleza": "tradicion_oral", "nivel": "ampliado",
+      "titulo": "Procedencia del nombre Kumanday",
+      "texto": "Si bien es conocido el nombre indígena de Kumandai, Kumanday o Cumanday para referirse al Volcán Nevado del Ruiz, no existe la suficiente investigación para delimitar la procedencia de la palabra, la cual se ubica principalmente en la comunidad prehispánica Quimbaya, para la cual el vocablo significa en español banco hermoso (IDEAM), Gran padre de barbas blancas (tradición oral de guías de turismo), entre otros muchos nombres.",
+      "palabrasClave": ["Kumanday", "Cumanday", "Kumandai", "nombre", "origen", "significado", "Quimbaya"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "zona_norte-p1", "guionId": "zona_norte", "pagina": 1, "estacionId": null,
+      "tema": "cultura", "naturaleza": "tradicion_oral", "nivel": "breve",
+      "titulo": "Del Kumanday al Ruiz",
+      "texto": "Mucho antes de las expediciones coloniales, este territorio era la morada de comunidades que guardaban un respeto profundo por la montaña. Lo llamaban Kumanday. En la cosmogonía indígena, este nombre se traduce como Cerro Blanco, El de la Nariz Humeante o Padre Blanco. Para ellos, el volcán era un ser vivo, un centinela sagrado que marcaba la conexión entre la tierra y el cielo.",
+      "palabrasClave": ["Kumanday", "nombre", "origen", "significado", "Cerro Blanco", "Padre Blanco"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "zona_norte-p7", "guionId": "zona_norte", "pagina": 7, "estacionId": null,
+      "tema": "buenas_practicas", "naturaleza": "dato_fechado", "nivel": "ampliado",
+      "titulo": "El Ruiz es un volcán activo",
+      "texto": "El Nevado del Ruiz es un volcán activo (actualmente en Nivel de Estado de Alerta Amarilla). Decir que está apagado genera una falsa sensación de seguridad. Se debe hablar de periodos de reposo o actividad constante, pero nunca de extinción. La vigilancia del Servicio Geológico Colombiano es 24/7 precisamente porque es un sistema vivo.",
+      "palabrasClave": ["volcán", "activo", "alerta", "amarilla", "apagado", "Servicio Geológico"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "zona_norte-p7-2", "guionId": "zona_norte", "pagina": 7, "estacionId": null,
+      "tema": "buenas_practicas", "naturaleza": "cientifico", "nivel": "breve",
+      "titulo": "Ceniza no es nieve",
+      "texto": "Lo que cubre gran parte del sector norte es ceniza volcánica reciente y depósitos piroclásticos, no nieve. La nieve y el glaciar están en franco retroceso.",
+      "palabrasClave": ["ceniza", "nieve", "gris", "glaciar", "piroclásticos"],
+      "apto": true, "origen": "guion"
+    },
+    {
+      "id": "uton2024-p46", "guionId": "uton2024", "pagina": 46, "estacionId": null,
+      "tema": "salud_altura", "naturaleza": "cientifico", "nivel": "ampliado",
+      "titulo": "Síntomas del mal agudo de montaña en turistas",
+      "texto": "Estudio sobre actividad física y síntomas en la aclimatación en turistas que visitan el Nevado del Ruiz: relación entre la actividad física de los turistas y la aparición de síntomas del Mal Agudo de Montaña (MAM) a 4,287 y 4,816 metros sobre el nivel del mar.",
+      "palabrasClave": ["mal agudo de montaña", "MAM", "soroche", "dolor de cabeza", "síntomas", "altura"],
+      "apto": false, "origen": "guion"
+    }
+  ],
+  "glosario": [
+    { "termino": "Duna", "definicion": "Elevación de arena producida por el viento.", "guionId": "uton2024", "pagina": 11 }
+  ],
+  "sinonimos": [
+    { "termino": "rocas", "equivalentes": ["piedras", "piedra", "peñas"] },
+    { "termino": "fracturas", "equivalentes": ["grietas", "rajaduras", "partidas"] },
+    { "termino": "rojizo", "equivalentes": ["rojo", "rojas", "color", "oxidado"] },
+    { "termino": "lunares", "equivalentes": ["valle lunar"] },
+    { "termino": "kumanday", "equivalentes": ["cumanday", "kumandai"] },
+    { "termino": "frailejon", "equivalentes": ["frailejones", "espeletia"] }
+  ],
+  "diferencias": [
+    {
+      "id": "kumanday-origen",
+      "tema": "Origen del nombre Kumanday",
+      "fragmentoIds": ["zona_norte-p1", "uton2024-p34"],
+      "nota": "El guion de la zona norte da traducciones del nombre (Cerro Blanco, Padre Blanco); el guion UTON dice que no hay investigación suficiente para delimitar su procedencia. Se presenta como tradición oral."
+    }
+  ],
+  "retos": []
+}
