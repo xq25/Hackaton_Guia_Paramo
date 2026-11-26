@@ -1,34 +1,30 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import type { Estacion } from '../dominio/modelo';
 import { colores, espacio, tamanos, tipografia } from '../pantallas/tema';
 import { bytesABase64 } from './base64';
 import { cargarRuta, crearLectorRangos, ubicarPmtiles } from './fuenteMapa';
 import { MAPA_HTML } from './mapaHtml.generado';
-import { estacionesDeRuta, referenciasDeRuta } from './ruta';
+import { estacionesDeRuta, puntosSenderoMapa, referenciasDeRuta } from './ruta';
 
 export interface VistaMapaProps {
   estaciones: Estacion[];
   estacionesVisitadasIds: string[];
+  /** Estación donde se ubica actualmente el caminante simulado. */
+  estacionSimuladaId?: string | null;
   alSeleccionarEstacion: (estacionId: string) => void;
-}
-
-interface PuntoMapa {
-  id: string;
-  nombre: string;
-  lat: number | null;
-  lon: number | null;
-  aproximada: boolean;
 }
 
 export function VistaMapa({
   estaciones,
   estacionesVisitadasIds,
+  estacionSimuladaId = null,
   alSeleccionarEstacion,
 }: VistaMapaProps) {
   const webRef = useRef<WebView<object> | null>(null);
   const lectorRef = useRef<ReturnType<typeof crearLectorRangos> | null>(null);
+  const inicializadoRef = useRef(false);
 
   const [webListo, setWebListo] = useState(false);
   const [recursosListos, setRecursosListos] = useState(false);
@@ -59,31 +55,17 @@ export function VistaMapa({
     };
   }, []);
 
-  const puntos: PuntoMapa[] = useMemo(() => {
-    const desdeRuta = estacionesDeRuta(rutaGeo);
-    return [...estaciones]
-      .sort((a, b) => a.orden - b.orden)
-      .map((e) => {
-        if (e.ubicacion) {
-          return { id: e.id, nombre: e.nombre, lat: e.ubicacion.lat, lon: e.ubicacion.lon, aproximada: false };
-        }
-        const aprox = desdeRuta[e.id];
-        if (aprox) {
-          return { id: e.id, nombre: e.nombre, lat: aprox.lat, lon: aprox.lon, aproximada: aprox.aproximada };
-        }
-        return { id: e.id, nombre: e.nombre, lat: null, lon: null, aproximada: true };
-      });
-  }, [estaciones, rutaGeo]);
+  const puntos = useMemo(
+    () => puntosSenderoMapa(estaciones, estacionesDeRuta(rutaGeo)),
+    [estaciones, rutaGeo]
+  );
 
   const referencias = useMemo(() => referenciasDeRuta(rutaGeo), [rutaGeo]);
 
-  const estacionesSinPin = useMemo(
-    () => puntos.filter((p) => p.lat == null || p.lon == null),
-    [puntos]
-  );
-
+  // Inicializa una sola vez cuando el WebView y los archivos locales están listos.
   useEffect(() => {
-    if (!webListo || !recursosListos) return;
+    if (!webListo || !recursosListos || inicializadoRef.current) return;
+    inicializadoRef.current = true;
     enviar({
       tipo: 'iniciar',
       tieneTeselas,
@@ -91,13 +73,31 @@ export function VistaMapa({
       estaciones: puntos,
       referencias,
       visitadas: estacionesVisitadasIds,
+      simuladaId: estacionSimuladaId,
     });
-  }, [webListo, recursosListos, tieneTeselas, rutaGeo, puntos, referencias, estacionesVisitadasIds, enviar]);
+  }, [
+    webListo,
+    recursosListos,
+    tieneTeselas,
+    rutaGeo,
+    puntos,
+    referencias,
+    estacionesVisitadasIds,
+    estacionSimuladaId,
+    enviar,
+  ]);
 
+  // Actualiza los colores de estaciones visitadas sin reiniciar el zoom del usuario.
   useEffect(() => {
-    if (!webListo || !recursosListos) return;
+    if (!inicializadoRef.current) return;
     enviar({ tipo: 'visitas', visitadas: estacionesVisitadasIds });
-  }, [webListo, recursosListos, estacionesVisitadasIds, enviar]);
+  }, [estacionesVisitadasIds, enviar]);
+
+  // Mueve el marcador 🚶 cuando cambia la estación en el simulador de caminata.
+  useEffect(() => {
+    if (!inicializadoRef.current || !estacionSimuladaId) return;
+    enviar({ tipo: 'caminante', estacionId: estacionSimuladaId, centrar: true });
+  }, [estacionSimuladaId, enviar]);
 
   const alRecibirMensaje = useCallback(
     (ev: WebViewMessageEvent) => {
@@ -136,8 +136,6 @@ export function VistaMapa({
     [alSeleccionarEstacion, enviar]
   );
 
-  const visitadasSet = useMemo(() => new Set(estacionesVisitadasIds), [estacionesVisitadasIds]);
-
   return (
     <View style={estilos.contenedor}>
       <WebView<object>
@@ -149,39 +147,14 @@ export function VistaMapa({
         domStorageEnabled={false}
         style={estilos.webview}
       />
-      {/* Aguacerales y Lunares aún no tienen coordenadas en OSM: barra rápida sin inventar ubicación */}
-      {recursosListos && estacionesSinPin.length > 0 ? (
-        <View style={estilos.respaldoEstaciones} accessibilityLabel="Estaciones sin coordenadas en mapa">
-          <Text style={estilos.respaldoAviso}>
-            Paradas sin posición en OSM (toca para abrir):
-          </Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={estilos.respaldoFila}>
-            {estacionesSinPin.map((e) => {
-              const visitada = visitadasSet.has(e.id);
-              return (
-                <Pressable
-                  key={e.id}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Estación ${e.nombre}`}
-                  onPress={() => alSeleccionarEstacion(e.id)}
-                  style={[
-                    estilos.fichaEstacion,
-                    { borderColor: visitada ? colores.visitada : colores.borde },
-                  ]}
-                >
-                  <View
-                    style={[
-                      estilos.puntoEstado,
-                      { backgroundColor: visitada ? colores.visitada : colores.sinVisitar },
-                    ]}
-                  />
-                  <Text style={estilos.fichaTexto}>{e.nombre}</Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-      ) : null}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Centrar mapa en el sendero"
+        onPress={() => enviar({ tipo: 'encuadrarRuta' })}
+        style={estilos.botonCentrar}
+      >
+        <Text style={estilos.textoCentrar}>🎯 Sendero</Text>
+      </Pressable>
     </View>
   );
 }
@@ -189,34 +162,21 @@ export function VistaMapa({
 const estilos = StyleSheet.create({
   contenedor: { flex: 1, backgroundColor: colores.superficie },
   webview: { flex: 1, backgroundColor: 'transparent' },
-  respaldoEstaciones: {
+  botonCentrar: {
     position: 'absolute',
-    left: espacio.m,
-    right: espacio.m,
-    top: 102,
+    right: espacio.s + 2,
+    top: 170,
     backgroundColor: colores.fondo,
-    borderRadius: tamanos.radio,
     borderWidth: tamanos.bordeGrueso,
     borderColor: colores.borde,
-    padding: espacio.s,
-    gap: espacio.xs,
-  },
-  respaldoAviso: {
-    fontSize: tipografia.pequeno,
-    color: colores.textoSuave,
-    fontWeight: tipografia.pesoFuerte,
-  },
-  respaldoFila: { gap: espacio.s, paddingVertical: espacio.xs },
-  fichaEstacion: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: espacio.xs + 2,
-    minHeight: tamanos.toqueMinimo,
-    paddingHorizontal: espacio.m,
-    backgroundColor: colores.superficie,
     borderRadius: tamanos.radio,
-    borderWidth: tamanos.bordeGrueso,
+    paddingHorizontal: espacio.s + 2,
+    paddingVertical: 6,
+    elevation: 3,
   },
-  puntoEstado: { width: 12, height: 12, borderRadius: 6 },
-  fichaTexto: { fontSize: tipografia.cuerpo, fontWeight: tipografia.pesoFuerte, color: colores.texto },
+  textoCentrar: {
+    fontSize: 12,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.texto,
+  },
 });

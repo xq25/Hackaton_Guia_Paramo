@@ -20,6 +20,12 @@
       "expo-asset",
       "llama.rn",
       "./plugins/withAndroidArm64.js"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e1f0a11f-5dbb-4273-a11f-b2b4db44429e"
+      }
+    },
+    "owner": "joabermu"
   }
 }

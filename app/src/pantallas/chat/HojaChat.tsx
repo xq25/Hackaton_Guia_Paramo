@@ -19,7 +19,12 @@ import {
 } from '../../dominio/modelo';
 import { Boton, Etiqueta, Hoja } from '../comunes';
 import { colores, espacio, tamanos, tipografia } from '../tema';
-import { esRespuestaLimite, formatearCita, orquestadorMaqueta, sugerenciasRecorrido } from './formatoChat';
+import {
+  esRespuestaLimite,
+  formatearCita,
+  orquestadorMaqueta,
+  sugerenciasRecorrido,
+} from './formatoChat';
 
 export interface HojaChatProps {
   visible: boolean;
@@ -29,6 +34,8 @@ export interface HojaChatProps {
   orquestador?: OrquestadorRespuestas;
   precargarModelo?: () => Promise<void>;
   liberarModelo?: () => Promise<void>;
+  /** Indica si el archivo modelo.gguf está presente en el almacenamiento del celular. */
+  modeloLocalDisponible?: boolean;
   alAbrirSeguridad?: () => void;
   alAbrirAlbum?: () => void;
 }
@@ -43,6 +50,21 @@ interface MensajeChat {
   ampliadoUsado?: boolean;
 }
 
+function etiquetaModoRespuesta(r: Respuesta): string {
+  switch (r.tipo) {
+    case TipoRespuesta.RESPONDIDA:
+      return `🤖 IA local · ${r.tiempoMs} ms`;
+    case TipoRespuesta.RESPALDO_SIN_MODELO:
+      return `📖 Guion oficial · ${r.tiempoMs} ms`;
+    case TipoRespuesta.CON_DIFERENCIA_ENTRE_FUENTES:
+      return `⚖️ Comparación de guiones · ${r.tiempoMs} ms`;
+    case TipoRespuesta.REMISION_AL_PERSONAL:
+      return `🛡️ Filtro de seguridad · ${r.tiempoMs} ms`;
+    case TipoRespuesta.ABSTENCION:
+      return `ℹ️ Fuera del guion · ${r.tiempoMs} ms`;
+  }
+}
+
 export function HojaChat({
   visible,
   alCerrar,
@@ -51,6 +73,7 @@ export function HojaChat({
   orquestador = orquestadorMaqueta,
   precargarModelo,
   liberarModelo,
+  modeloLocalDisponible = false,
   alAbrirSeguridad,
   alAbrirAlbum,
 }: HojaChatProps) {
@@ -58,6 +81,7 @@ export function HojaChat({
   const [entrada, setEntrada] = useState('');
   const [pensando, setPensando] = useState(false);
   const [mensajes, setMensajes] = useState<MensajeChat[]>([]);
+  const [mostrarSugerencias, setMostrarSugerencias] = useState(true);
   const scrollRef = useRef<ComponentRef<typeof ScrollView> | null>(null);
   const secRef = useRef(1);
 
@@ -67,7 +91,6 @@ export function HojaChat({
     }
   }, [visible, estacionInicialId]);
 
-  // Precarga perezosa al abrir el chat y liberación al pasar a segundo plano (C3).
   useEffect(() => {
     if (visible && precargarModelo) {
       precargarModelo().catch(() => undefined);
@@ -95,16 +118,25 @@ export function HojaChat({
   );
 
   const sugerencias = useMemo(
-    () => (estacionActual ? estacionActual.preguntasSugeridas : sugerenciasRecorrido(estacionesOrdenadas)),
+    () =>
+      estacionActual
+        ? estacionActual.preguntasSugeridas
+        : sugerenciasRecorrido(estacionesOrdenadas),
     [estacionActual, estacionesOrdenadas]
   );
 
   const enviarPregunta = useCallback(
-    async (textoCrudo: string, nivel: Nivel, idOrigenAmpliar?: string, estacionForzada?: string | null) => {
+    async (
+      textoCrudo: string,
+      nivel: Nivel,
+      idOrigenAmpliar?: string,
+      estacionForzada?: string | null
+    ) => {
       const limpio = textoCrudo.trim();
       if (!limpio || pensando) return;
 
       const estConsulta = estacionForzada !== undefined ? estacionForzada : estacionId;
+      setMostrarSugerencias(false);
 
       if (idOrigenAmpliar) {
         setMensajes((prev) =>
@@ -120,6 +152,8 @@ export function HojaChat({
       }
 
       setPensando(true);
+      setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 40);
+
       try {
         const resp = await orquestador.responder(limpio, estConsulta, nivel);
         const idResp = `m-${secRef.current++}`;
@@ -136,7 +170,7 @@ export function HojaChat({
         ]);
       } finally {
         setPensando(false);
-        setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 80);
+        setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
       }
     },
     [estacionId, orquestador, pensando]
@@ -147,7 +181,7 @@ export function HojaChat({
       <TextInput
         value={entrada}
         onChangeText={setEntrada}
-        placeholder="Escribe tu pregunta sobre el guion…"
+        placeholder="Pregunta algo del recorrido…"
         placeholderTextColor={colores.textoSuave}
         editable={!pensando}
         returnKeyType="send"
@@ -164,19 +198,44 @@ export function HojaChat({
     </View>
   );
 
+  const verSugerencias = mensajes.length === 0 || mostrarSugerencias;
+
   return (
     <Hoja
       visible={visible}
       alCerrar={alCerrar}
-      titulo="💬 Guía del recorrido"
-      altoMaximo={0.9}
+      titulo="💬 Guía virtual UTON"
+      altoMaximo={0.92}
       desplazable={false}
       pie={pie}
     >
-      {/* Selector de estación o "Todo el recorrido" */}
+      {/* Estado visible del asistente para verificar funcionamiento en todo momento */}
+      <View style={estilos.barraEstado}>
+        <Text style={estilos.textoEstado} numberOfLines={1}>
+          {modeloLocalDisponible
+            ? '🟢 IA local (modelo.gguf) + Guion UTON'
+            : '🟢 Modo guion directo (sin modelo.gguf · respuesta inmediata)'}
+        </Text>
+        {mensajes.length > 0 ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setMostrarSugerencias((v) => !v)}
+            style={estilos.botonToggleSug}
+          >
+            <Text style={estilos.textoToggleSug}>
+              {verSugerencias ? 'Ocultar sugerencias' : '💡 Sugerencias'}
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
+
+      {/* Selector compacto de estación */}
       <View style={estilos.bloqueSelector}>
-        <Text style={estilos.etiquetaSeccion}>Estación:</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={estilos.filaChips}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={estilos.filaChips}
+        >
           <ChipEstacion
             texto="Todo el recorrido"
             activo={estacionId === null}
@@ -193,14 +252,26 @@ export function HojaChat({
         </ScrollView>
       </View>
 
-      {/* Lista de mensajes y sugerencias */}
+      {/* Área amplia de conversación */}
       <ScrollView
         ref={scrollRef}
         style={estilos.lista}
         contentContainerStyle={estilos.listaContenido}
         keyboardShouldPersistTaps="handled"
+        onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
       >
-        {sugerencias.length > 0 ? (
+        {mensajes.length === 0 ? (
+          <View style={estilos.bienvenida}>
+            <Text style={estilos.bienvenidaTitulo}>
+              ¡Hola! Soy el guía sin señal del recorrido {estacionActual ? `(${estacionActual.nombre})` : 'Brisas – Valle de las Tumbas'}.
+            </Text>
+            <Text style={estilos.bienvenidaCuerpo}>
+              Respondo únicamente con los guiones oficiales UTON e incluyo la página exacta citada. Toca una sugerencia o escribe tu pregunta abajo:
+            </Text>
+          </View>
+        ) : null}
+
+        {verSugerencias && sugerencias.length > 0 ? (
           <View style={estilos.bloqueSugerencias}>
             <Text style={estilos.etiquetaSeccion}>Preguntas sugeridas:</Text>
             {sugerencias.map((pregunta) => (
@@ -216,7 +287,7 @@ export function HojaChat({
                   pensando && estilos.deshabilitado,
                 ]}
               >
-                <Text style={estilos.textoSugerencia}>{pregunta}</Text>
+                <Text style={estilos.textoSugerencia}>▶ {pregunta}</Text>
               </Pressable>
             ))}
           </View>
@@ -245,7 +316,7 @@ export function HojaChat({
         {pensando ? (
           <View style={estilos.pensando} accessibilityLiveRegion="polite">
             <ActivityIndicator color={colores.primario} />
-            <Text style={estilos.pensandoTexto}>Pensando…</Text>
+            <Text style={estilos.pensandoTexto}>Buscando en el guion…</Text>
           </View>
         ) : null}
       </ScrollView>
@@ -293,22 +364,26 @@ function TarjetaRespuesta({
 
   return (
     <View style={[estilos.burbujaGuia, esLimite && estilos.burbujaLimite]}>
-      {esLimite ? (
-        <Etiqueta
-          texto={
-            respuesta.tipo === TipoRespuesta.REMISION_AL_PERSONAL
-              ? 'Consulta al personal del parque'
-              : 'Fuera del guion'
-          }
-          variante="aviso"
-        />
-      ) : null}
+      <View style={estilos.filaEncabezadoResp}>
+        <Text style={estilos.modoResp}>{etiquetaModoRespuesta(respuesta)}</Text>
+        {esLimite ? (
+          <Etiqueta
+            texto={
+              respuesta.tipo === TipoRespuesta.REMISION_AL_PERSONAL
+                ? 'Consulta al personal'
+                : 'Fuera del guion'
+            }
+            variante="aviso"
+          />
+        ) : null}
+        {respuesta.tipo === TipoRespuesta.CON_DIFERENCIA_ENTRE_FUENTES ? (
+          <Etiqueta texto="Diferencia entre fuentes" variante="acento" />
+        ) : null}
+      </View>
 
-      {respuesta.tipo === TipoRespuesta.CON_DIFERENCIA_ENTRE_FUENTES ? (
-        <Etiqueta texto="Diferencia entre fuentes oficiales" variante="acento" />
-      ) : null}
-
-      <Text style={[estilos.textoGuia, esLimite && estilos.textoLimite]}>{respuesta.texto}</Text>
+      <Text style={[estilos.textoGuia, esLimite && estilos.textoLimite]} selectable>
+        {respuesta.texto}
+      </Text>
 
       {respuesta.advertencias.length > 0 ? (
         <View style={estilos.filaEtiquetas}>
@@ -363,18 +438,47 @@ function TarjetaRespuesta({
 }
 
 const estilos = StyleSheet.create({
-  bloqueSelector: { gap: espacio.xs },
+  barraEstado: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colores.primarioSuave,
+    borderRadius: 8,
+    paddingHorizontal: espacio.s + 2,
+    paddingVertical: espacio.xs + 1,
+    gap: espacio.s,
+  },
+  textoEstado: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.primario,
+  },
+  botonToggleSug: {
+    paddingHorizontal: espacio.s,
+    paddingVertical: 2,
+    borderRadius: 6,
+    backgroundColor: colores.fondo,
+    borderWidth: 1,
+    borderColor: colores.primario,
+  },
+  textoToggleSug: {
+    fontSize: 12,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.primario,
+  },
+  bloqueSelector: { flexGrow: 0 },
   etiquetaSeccion: {
     fontSize: tipografia.pequeno,
     fontWeight: tipografia.pesoFuerte,
     color: colores.textoSuave,
   },
-  filaChips: { gap: espacio.s, paddingVertical: espacio.xs },
+  filaChips: { gap: espacio.xs + 2, paddingVertical: 2 },
   chip: {
-    minHeight: tamanos.toqueMinimo,
+    height: 34,
     paddingHorizontal: espacio.m,
     borderRadius: 999,
-    borderWidth: tamanos.bordeGrueso,
+    borderWidth: 1.5,
     borderColor: colores.borde,
     backgroundColor: colores.fondo,
     alignItems: 'center',
@@ -390,18 +494,41 @@ const estilos = StyleSheet.create({
     color: colores.texto,
   },
   chipTextoActivo: { color: colores.textoInverso },
-  lista: { flex: 1 },
-  listaContenido: { gap: espacio.m, paddingBottom: espacio.m },
-  bloqueSugerencias: { gap: espacio.s },
+  lista: {
+    flex: 1,
+    minHeight: 0,
+  },
+  listaContenido: {
+    gap: espacio.s + 2,
+    paddingVertical: espacio.xs,
+    paddingBottom: espacio.m,
+  },
+  bienvenida: {
+    backgroundColor: colores.superficie,
+    borderRadius: tamanos.radio,
+    borderWidth: 1,
+    borderColor: colores.bloqueada,
+    padding: espacio.m,
+    gap: espacio.xs,
+  },
+  bienvenidaTitulo: {
+    fontSize: tipografia.cuerpo,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.primario,
+  },
+  bienvenidaCuerpo: {
+    fontSize: tipografia.pequeno,
+    lineHeight: 19,
+    color: colores.textoSuave,
+  },
+  bloqueSugerencias: { gap: espacio.xs + 2 },
   botonSugerencia: {
-    minHeight: tamanos.toqueMinimo,
     paddingHorizontal: espacio.m,
-    paddingVertical: espacio.s,
+    paddingVertical: espacio.s + 2,
     borderRadius: tamanos.radio,
     borderWidth: 1,
     borderColor: colores.primario,
     backgroundColor: colores.primarioSuave,
-    justifyContent: 'center',
   },
   textoSugerencia: {
     fontSize: tipografia.pequeno,
@@ -415,7 +542,8 @@ const estilos = StyleSheet.create({
     maxWidth: '88%',
     backgroundColor: colores.primario,
     borderRadius: tamanos.radio,
-    padding: espacio.m,
+    paddingHorizontal: espacio.m,
+    paddingVertical: espacio.s + 2,
   },
   textoVisitante: {
     fontSize: tipografia.cuerpo,
@@ -436,6 +564,18 @@ const estilos = StyleSheet.create({
     backgroundColor: colores.avisoSuave,
     borderColor: colores.aviso,
   },
+  filaEncabezadoResp: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: espacio.xs,
+  },
+  modoResp: {
+    fontSize: 12,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.textoSuave,
+  },
   textoGuia: {
     fontSize: tipografia.cuerpo,
     lineHeight: tipografia.interlineado,
@@ -449,15 +589,15 @@ const estilos = StyleSheet.create({
   bloqueCitas: {
     borderTopWidth: 1,
     borderTopColor: colores.bloqueada,
-    paddingTop: espacio.s,
-    gap: espacio.xs,
+    paddingTop: espacio.xs + 2,
+    gap: 2,
   },
   textoCita: {
     fontSize: tipografia.pequeno,
     fontWeight: tipografia.pesoFuerte,
-    color: colores.textoSuave,
+    color: colores.primario,
   },
-  botonAccion: { alignSelf: 'flex-start', marginTop: espacio.xs },
+  botonAccion: { alignSelf: 'flex-start', marginTop: 2 },
   pensando: {
     flexDirection: 'row',
     alignItems: 'center',

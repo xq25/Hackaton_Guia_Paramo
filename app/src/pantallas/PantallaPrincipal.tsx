@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { ResultadoVisita } from '../juego';
 import { VistaMapa } from '../mapa';
 import { HojaChat } from './chat';
-import { Boton } from './comunes';
 import { usarApp } from './ContextoApp';
 import { PantallaEditor } from './editor';
 import { PanelEstacion } from './estacion';
@@ -28,6 +27,7 @@ export function PantallaPrincipal() {
     catalogo,
     config,
     asistente,
+    modeloLocalDisponible,
     versionGuion,
     refrescarVersionGuion,
     progreso,
@@ -36,13 +36,22 @@ export function PantallaPrincipal() {
     verificarPinDemo,
     cambiarModoDemo,
     registrarLlegadaDemo,
+    desbloquearTodoDemo,
     reiniciarProgreso,
   } = usarApp();
 
+  const estacionesOrdenadas = useMemo(
+    () => [...paquete.estaciones].sort((a, b) => a.orden - b.orden),
+    [paquete.estaciones]
+  );
+
+  const [indiceCaminante, setIndiceCaminante] = useState(0);
   const [estacionPanelId, setEstacionPanelId] = useState<string | null>(null);
   const [estacionChatId, setEstacionChatId] = useState<string | null>(null);
   const [hojaActiva, setHojaActiva] = useState<HojaActiva>('ninguna');
   const [recompensaActiva, setRecompensaActiva] = useState<ResultadoVisita | null>(null);
+
+  const estacionSimulada = estacionesOrdenadas[indiceCaminante] ?? estacionesOrdenadas[0] ?? null;
 
   const estacionSeleccionada = useMemo(
     () => paquete.estaciones.find((e) => e.id === estacionPanelId) ?? null,
@@ -51,11 +60,14 @@ export function PantallaPrincipal() {
 
   const estacionesVisitadasIds = useMemo(
     () =>
-      paquete.estaciones
+      estacionesOrdenadas
         .filter((e) => progreso.estacionVisitada(estadoProgreso, e.id))
         .map((e) => e.id),
-    [paquete.estaciones, progreso, estadoProgreso]
+    [estacionesOrdenadas, progreso, estadoProgreso]
   );
+
+  const visitadasSet = useMemo(() => new Set(estacionesVisitadasIds), [estacionesVisitadasIds]);
+  const todasVisitadas = estacionesOrdenadas.length > 0 && estacionesVisitadasIds.length === estacionesOrdenadas.length;
 
   const abrirChatEnEstacion = (estacionId: string | null) => {
     setEstacionPanelId(null);
@@ -64,9 +76,39 @@ export function PantallaPrincipal() {
   };
 
   const manejarLlegadaDemo = async (estacionId: string) => {
+    const idx = estacionesOrdenadas.findIndex((e) => e.id === estacionId);
+    if (idx >= 0) setIndiceCaminante(idx);
     const resultado = await registrarLlegadaDemo(estacionId);
     setEstacionPanelId(null);
     setRecompensaActiva(resultado);
+  };
+
+  // Avanza el caminante simulado a la parada actual (si no se ha visitado) o a la siguiente y registra llegada.
+  const simularPasoCaminata = async () => {
+    if (estacionesOrdenadas.length === 0) return;
+    const actual = estacionesOrdenadas[indiceCaminante];
+    let destinoIdx = indiceCaminante;
+    if (actual && visitadasSet.has(actual.id)) {
+      destinoIdx = (indiceCaminante + 1) % estacionesOrdenadas.length;
+    }
+    const destino = estacionesOrdenadas[destinoIdx];
+    setIndiceCaminante(destinoIdx);
+    const resultado = await registrarLlegadaDemo(destino.id);
+    if (resultado.nueva) {
+      setRecompensaActiva(resultado);
+    } else {
+      setEstacionPanelId(destino.id);
+    }
+  };
+
+  const manejarDesbloquearTodo = async () => {
+    const resultado = await desbloquearTodoDemo();
+    if (estacionesOrdenadas.length > 0) {
+      setIndiceCaminante(estacionesOrdenadas.length - 1);
+    }
+    if (resultado.nueva) {
+      setRecompensaActiva(resultado);
+    }
   };
 
   const cerrarEditor = () => {
@@ -76,22 +118,25 @@ export function PantallaPrincipal() {
 
   return (
     <View style={estilos.raiz}>
-      {/* Mapa principal a pantalla completa (D14) */}
+      {/* Mapa principal a pantalla completa con zoom centrado en el sendero */}
       <VistaMapa
-        estaciones={paquete.estaciones}
+        estaciones={estacionesOrdenadas}
         estacionesVisitadasIds={estacionesVisitadasIds}
+        estacionSimuladaId={modoDemoActivo ? estacionSimulada?.id ?? null : null}
         alSeleccionarEstacion={(id) => {
+          const idx = estacionesOrdenadas.findIndex((e) => e.id === id);
+          if (idx >= 0) setIndiceCaminante(idx);
           setHojaActiva('ninguna');
           setEstacionPanelId(id);
         }}
       />
 
-      {/* Barra superior: título + versión/fragmentos (C1b) + Seguridad siempre visible + Menú 👤 */}
+      {/* Barra superior compacta */}
       <View style={estilos.barraSuperior} pointerEvents="box-none">
         <View style={estilos.marca}>
           <Text style={estilos.titulo}>ParamON</Text>
           <Text style={estilos.subtituloFragmentos}>
-            v{versionGuion} · {paquete.fragmentos.length} fragmentos
+            v{versionGuion} · {estacionesVisitadasIds.length}/{estacionesOrdenadas.length} paradas
           </Text>
         </View>
 
@@ -122,15 +167,102 @@ export function PantallaPrincipal() {
         </View>
       </View>
 
-      {/* Barra inferior flotante: acceso rápido al Guía virtual */}
-      <View style={estilos.barraInferior} pointerEvents="box-none">
-        <View style={estilos.espaciador} />
-        <Boton
-          titulo="Guía"
-          icono="💬"
-          alPresionar={() => abrirChatEnEstacion(null)}
-          estilo={estilos.botonFlotante}
-        />
+      {/* Panel inferior: Simulador de caminata (fuera del parque) + Botón Guía */}
+      <View style={estilos.panelInferior} pointerEvents="box-none">
+        {modoDemoActivo ? (
+          <View style={estilos.cajaSimulador}>
+            <View style={estilos.cabeceraSimulador}>
+              <Text style={estilos.tituloSimulador} numberOfLines={1}>
+                🚶 Simulador: {estacionSimulada ? `${indiceCaminante + 1}. ${estacionSimulada.nombre}` : 'Recorrido'}
+              </Text>
+              {!todasVisitadas ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Desbloquear todas las estaciones y especies"
+                  onPress={manejarDesbloquearTodo}
+                  style={estilos.botonDesbloquearTodo}
+                >
+                  <Text style={estilos.textoDesbloquearTodo}>🔓 Desbloquear todo</Text>
+                </Pressable>
+              ) : (
+                <Text style={estilos.insigniaCompleta}>✓ Todo desbloqueado</Text>
+              )}
+            </View>
+
+            {/* Tira de las 5 estaciones para saltar o ver cada parada */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={estilos.tiraParadas}
+            >
+              {estacionesOrdenadas.map((est, idx) => {
+                const esActual = idx === indiceCaminante;
+                const visitada = visitadasSet.has(est.id);
+                return (
+                  <Pressable
+                    key={est.id}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Ir a ${est.nombre}`}
+                    onPress={() => {
+                      setIndiceCaminante(idx);
+                      setEstacionPanelId(est.id);
+                    }}
+                    style={[
+                      estilos.pastillaParada,
+                      visitada && estilos.pastillaVisitada,
+                      esActual && estilos.pastillaActual,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        estilos.textoPastilla,
+                        esActual && estilos.textoPastillaActual,
+                      ]}
+                    >
+                      {visitada ? '✓ ' : `${idx + 1}. `}
+                      {est.nombre}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+
+            <View style={estilos.filaAccionesInferior}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Simular caminata y registrar llegada"
+                onPress={simularPasoCaminata}
+                style={estilos.botonCaminar}
+              >
+                <Text style={estilos.textoBotonCaminar}>
+                  {estacionSimulada && !visitadasSet.has(estacionSimulada.id)
+                    ? `📍 Llegar a ${estacionSimulada.nombre}`
+                    : '🚶 Avanzar parada'}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Abrir guía virtual"
+                onPress={() => abrirChatEnEstacion(estacionSimulada?.id ?? null)}
+                style={estilos.botonGuia}
+              >
+                <Text style={estilos.textoBotonGuia}>💬 Guía</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : (
+          <View style={estilos.filaSoloGuia}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Abrir guía virtual"
+              onPress={() => abrirChatEnEstacion(null)}
+              style={estilos.botonGuia}
+            >
+              <Text style={estilos.textoBotonGuia}>💬 Guía del recorrido</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
 
       {/* Panel de estación conectado a ProgresoJuego (C4 + C6) */}
@@ -161,11 +293,12 @@ export function PantallaPrincipal() {
       <HojaChat
         visible={hojaActiva === 'chat'}
         alCerrar={() => setHojaActiva('ninguna')}
-        estaciones={paquete.estaciones}
+        estaciones={estacionesOrdenadas}
         estacionInicialId={estacionChatId}
         orquestador={asistente.orquestador}
         precargarModelo={asistente.precargarModelo}
         liberarModelo={asistente.liberarModelo}
+        modeloLocalDisponible={modeloLocalDisponible}
         alAbrirSeguridad={() => setHojaActiva('seguridad')}
         alAbrirAlbum={() => setHojaActiva('album')}
       />
@@ -259,47 +392,48 @@ const estilos = StyleSheet.create({
   raiz: { flex: 1, backgroundColor: colores.fondo },
   barraSuperior: {
     position: 'absolute',
-    top: 40,
-    left: espacio.m,
-    right: espacio.m,
+    top: 36,
+    left: espacio.s + 2,
+    right: espacio.s + 2,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: espacio.s,
+    gap: espacio.xs + 2,
   },
   marca: {
-    backgroundColor: colores.fondo,
+    flexShrink: 1,
+    backgroundColor: 'rgba(255,255,255,0.95)',
     borderWidth: tamanos.bordeGrueso,
     borderColor: colores.borde,
     borderRadius: tamanos.radio,
-    paddingHorizontal: espacio.m,
-    paddingVertical: espacio.xs + 2,
+    paddingHorizontal: espacio.s + 2,
+    paddingVertical: 4,
   },
   titulo: {
-    fontSize: tipografia.subtitulo,
+    fontSize: 16,
     fontWeight: tipografia.pesoFuerte,
     color: colores.primario,
   },
   subtituloFragmentos: {
-    fontSize: tipografia.pequeno,
+    fontSize: 11,
     color: colores.textoSuave,
     fontWeight: tipografia.pesoFuerte,
   },
   accionesSuperiores: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: espacio.s,
+    gap: espacio.xs + 2,
   },
   botonSeguridadRapido: {
-    minHeight: tamanos.toqueMinimo,
-    paddingHorizontal: espacio.m,
+    height: tamanos.toqueMinimo,
+    paddingHorizontal: espacio.s + 2,
     borderRadius: tamanos.radio,
     backgroundColor: colores.seguridad,
     alignItems: 'center',
     justifyContent: 'center',
   },
   textoSeguridadRapido: {
-    fontSize: tipografia.pequeno,
+    fontSize: 12,
     fontWeight: tipografia.pesoFuerte,
     color: colores.textoInverso,
   },
@@ -309,27 +443,123 @@ const estilos = StyleSheet.create({
     borderRadius: tamanos.radio,
     borderWidth: tamanos.bordeGrueso,
     borderColor: colores.borde,
-    backgroundColor: colores.fondo,
+    backgroundColor: 'rgba(255,255,255,0.95)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconoPerfil: { fontSize: tipografia.subtitulo },
-  barraInferior: {
+  iconoPerfil: { fontSize: 18 },
+  panelInferior: {
     position: 'absolute',
-    bottom: espacio.l,
-    left: espacio.m,
-    right: espacio.m,
+    bottom: espacio.m,
+    left: espacio.s + 2,
+    right: espacio.s + 2,
+  },
+  cajaSimulador: {
+    backgroundColor: 'rgba(255,255,255,0.96)',
+    borderRadius: tamanos.radio + 2,
+    borderWidth: tamanos.bordeGrueso,
+    borderColor: colores.borde,
+    padding: espacio.s + 2,
+    gap: espacio.xs + 2,
+    elevation: 5,
+  },
+  cabeceraSimulador: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: espacio.s,
   },
-  espaciador: { flex: 1 },
-  botonFlotante: {
-    elevation: 4,
+  tituloSimulador: {
+    flex: 1,
+    fontSize: tipografia.pequeno,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.texto,
+  },
+  botonDesbloquearTodo: {
+    backgroundColor: colores.acentoSuave,
+    borderWidth: 1,
+    borderColor: colores.acento,
+    borderRadius: 6,
+    paddingHorizontal: espacio.s,
+    paddingVertical: 3,
+  },
+  textoDesbloquearTodo: {
+    fontSize: 11,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.acento,
+  },
+  insigniaCompleta: {
+    fontSize: 11,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.visitada,
+  },
+  tiraParadas: {
+    gap: 6,
+    paddingVertical: 2,
+  },
+  pastillaParada: {
+    paddingHorizontal: espacio.s + 2,
+    paddingVertical: 5,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colores.borde,
+    backgroundColor: colores.superficie,
+  },
+  pastillaVisitada: {
+    backgroundColor: colores.primarioSuave,
+    borderColor: colores.visitada,
+  },
+  pastillaActual: {
+    backgroundColor: colores.aviso,
+    borderColor: colores.aviso,
+  },
+  textoPastilla: {
+    fontSize: 12,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.texto,
+  },
+  textoPastillaActual: {
+    color: colores.textoInverso,
+  },
+  filaAccionesInferior: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: espacio.s,
+  },
+  botonCaminar: {
+    flex: 1,
+    minHeight: 42,
+    backgroundColor: colores.aviso,
+    borderRadius: tamanos.radio,
+    paddingHorizontal: espacio.s + 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textoBotonCaminar: {
+    fontSize: tipografia.pequeno,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.textoInverso,
+  },
+  botonGuia: {
+    minHeight: 42,
+    paddingHorizontal: espacio.m + 2,
+    backgroundColor: colores.primario,
+    borderRadius: tamanos.radio,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textoBotonGuia: {
+    fontSize: tipografia.cuerpo,
+    fontWeight: tipografia.pesoFuerte,
+    color: colores.textoInverso,
+  },
+  filaSoloGuia: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   contenedorModal: {
     flex: 1,
-    paddingTop: 32,
+    paddingTop: 28,
     backgroundColor: colores.fondo,
   },
 });
