@@ -18,10 +18,10 @@ describe('fichaNueva', () => {
   });
 
   test('desde un fragmento del guion: lo prellena y lo reemplaza', () => {
-    const f = fichaNueva(frag('uton2024-p7-3'));
+    const f = fichaNueva(frag('uton2024-p7-dc4'));
     expect(f).toMatchObject({
       titulo: 'No intervenir las dunas', estacionId: 'arenales', naturaleza: Naturaleza.NORMA,
-      fuente: { guionId: 'uton2024', pagina: 7 }, reemplazaFragmentoIds: ['uton2024-p7-3'],
+      fuente: { guionId: 'uton2024', pagina: 7 }, reemplazaFragmentoIds: ['uton2024-p7-dc4'],
     });
   });
 });
