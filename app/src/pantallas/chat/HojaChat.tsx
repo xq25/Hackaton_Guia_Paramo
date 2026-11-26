@@ -36,6 +36,7 @@ export interface HojaChatProps {
   liberarModelo?: () => Promise<void>;
   /** Indica si el archivo modelo.gguf está presente en el almacenamiento del celular. */
   modeloLocalDisponible?: boolean;
+  alAbrirAjustesModelo?: () => void;
   alAbrirSeguridad?: () => void;
   alAbrirAlbum?: () => void;
 }
@@ -74,6 +75,7 @@ export function HojaChat({
   precargarModelo,
   liberarModelo,
   modeloLocalDisponible = false,
+  alAbrirAjustesModelo,
   alAbrirSeguridad,
   alAbrirAlbum,
 }: HojaChatProps) {
@@ -213,9 +215,18 @@ export function HojaChat({
       <View style={estilos.barraEstado}>
         <Text style={estilos.textoEstado} numberOfLines={1}>
           {modeloLocalDisponible
-            ? '🟢 IA local (modelo.gguf) + Guion UTON'
-            : '🟢 Modo guion directo (sin modelo.gguf · respuesta inmediata)'}
+            ? '🟢 IA local activa (llama.rn + Guion UTON)'
+            : '🟢 Guion directo (sin .gguf cargado)'}
         </Text>
+        {!modeloLocalDisponible && alAbrirAjustesModelo ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={alAbrirAjustesModelo}
+            style={estilos.botonToggleSug}
+          >
+            <Text style={estilos.textoToggleSug}>⬇ Cargar IA</Text>
+          </Pressable>
+        ) : null}
         {mensajes.length > 0 ? (
           <Pressable
             accessibilityRole="button"
