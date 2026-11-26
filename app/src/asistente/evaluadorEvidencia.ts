@@ -1,6 +1,7 @@
 /**
  * Decide si hay evidencia suficiente y si las fuentes difieren.
- * - suficiente: el mejor puntaje alcanza `umbral` (ConfiguracionApp.umbralEvidencia).
+ * - suficiente: el mejor puntaje alcanza `umbral` (ConfiguracionApp.umbralEvidencia) y, si
+ *   coincide en una sola palabra, esa palabra es del vocabulario del páramo.
  * - Se quedan los resultados cercanos al mejor (≥ CORTE_RELATIVO), para que las citas sean
  *   pertinentes y no decorativas. Excepción: un fragmento de la MISMA parada que el mejor, que
  *   supera el umbral y cubre otra palabra de la pregunta ("¿qué explica las fracturas y qué el
@@ -15,23 +16,31 @@ import type {
   PaqueteContenido,
   ResultadoBusqueda,
 } from '../dominio/modelo';
+import { vocabularioDominio } from './normalizador';
 
-const CORTE_RELATIVO = 0.5;
+export const CORTE_RELATIVO = 0.4;
 
 const terminosDe = (r: ResultadoBusqueda): string[] =>
   'terminos' in r && Array.isArray(r.terminos) ? (r.terminos as string[]) : [];
 
-export function crearEvaluadorEvidencia(paquete: PaqueteContenido): EvaluadorEvidencia {
+export function crearEvaluadorEvidencia(paquete: PaqueteContenido, corte = CORTE_RELATIVO): EvaluadorEvidencia {
   return {
     evaluar(resultados: ResultadoBusqueda[], umbral: number): Evidencia {
       const mejor = resultados[0];
       if (!mejor || mejor.puntaje < umbral) return { resultados: [], suficiente: false };
 
+      // Una sola palabra en común solo cuenta si es del páramo ("frailejón"), no si es genérica
+      // ("había", "parque", "años"): así "¿había dinosaurios aquí?" no se responde con el guion.
+      const terminos = terminosDe(mejor);
+      if (terminos.length === 1 && !vocabularioDominio(paquete).has(terminos[0])) {
+        return { resultados: [], suficiente: false };
+      }
+
       const cubiertos = new Set<string>();
       const cercanos = resultados.filter(r => {
         const nuevos = terminosDe(r).filter(t => !cubiertos.has(t));
         const entra = r === mejor
-          || r.puntaje >= mejor.puntaje * CORTE_RELATIVO
+          || r.puntaje >= mejor.puntaje * corte
           || (r.puntaje >= umbral && nuevos.length > 0
               && r.fragmento.estacionId === mejor.fragmento.estacionId);
         if (entra) terminosDe(r).forEach(t => cubiertos.add(t));

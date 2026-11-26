@@ -82,7 +82,7 @@ describe('filtro: no bloquea preguntas que el guion responde', () => {
 describe('filtro: citas de normas', () => {
   test('cita la norma con su texto del guion, no un texto inventado', () => {
     const r = evaluar('¿Puedo caminar sobre las dunas?', 'arenales')!;
-    const norma = paquete.fragmentos.find(f => f.id === 'uton2024-p7-3')!;
+    const norma = paquete.fragmentos.find(f => f.id === 'uton2024-p7-dc4')!;
     expect(r.texto).toContain(norma.texto);
     expect(r.citas).toEqual([
       { guionTitulo: 'Guion Ecoturístico UTON 2024', pagina: 7, estacionNombre: 'Arenales', naturaleza: 'norma' },

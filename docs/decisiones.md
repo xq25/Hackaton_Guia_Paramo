@@ -25,6 +25,7 @@ Formato: una línea de decisión + por qué. Las nuevas van al final; si una cam
 | D19 | 2026-11-26 | El repo es **privado**; los guiones pueden vivir en `contenido/fuentes/` | Confirmado por el equipo |
 | D20 | 2026-11-26 | **NFC/QR y geocerca se posponen**. Orden de trabajo: **1) datos** (`contenido.json`, catálogo, mapa) → **2) asistente** con base al guion → **3) interfaz** (mapa + panel + chat) → 4) juego. Mientras tanto, las llegadas se registran solo con el botón de **modo demo** | Equipo: priorizar datos y asistente |
 | D21 | 2026-11-26 | **Rebalanceo**: A se queda con el juego (`juego/`, `pantallas/juego/`), B con la pantalla del editor de fichas (`pantallas/editor/`); C con base, estilo común, mapa, chat, navegación y APK | C era el cuello de botella; cada dev se queda con la UI de su propia lógica |
+| D22 | 2026-11-26 | **Calibración del asistente con `contenido.json` real (B5)**: `umbralEvidencia = 3`, `maxFragmentos = 3`; glosario con peso 0.5; si la pregunta coincide con el guion en **una sola palabra**, debe ser del vocabulario del páramo (sinónimos, glosario, estaciones, especies, nombres propios); corrección de ortografía solo en palabras de 7+ letras. Las reglas solo citan fragmentos de tipo `NORMA`. Medido en PC sin modelo: crear + indexar 53 ms, responder 1.7 ms de media (p95 5 ms) | Con el contenido real pasan los 41 casos (8 del jurado + variantes) sin responder preguntas ajenas al guion ("¿había dinosaurios aquí?" coincidía con "había"). Falta medir con el modelo en el celular |
 
 ## Pendientes (no inventar: conseguir el dato)
 
@@ -33,3 +34,9 @@ Formato: una línea de decisión + por qué. Las nuevas van al final; si una cam
 - [ ] Texto y respuesta de los 4 retos, validados contra el guion.
 - [ ] Medir en el celular de demo: tiempo de respuesta de Gemma E2B y consumo de batería (va en la ficha de una página).
 - [ ] Nombres comunes de especies: validar los de `docs/referencia/gbif-nevados.md` §5.4.
+- [ ] **Equivalencias común → científico** de las tablas de estación marcadas `validar: true` en `contenido/mapeo.yaml` (águila, conejo, cusumbo, pajonal, coral de páramo…): las propuso el equipo, no vienen del guion.
+- [ ] Fecha del Guion turístico zona norte (el documento no la trae; va como "s.f.").
+- [ ] Posición de **Aguacerales** y **Lunares**: no existen en OpenStreetMap. Brisas, Arenales y Valle de las Tumbas usan la posición de OSM (aproximada).
+- [ ] Trazado real del sendero (track GPS de UTON u OSM vía Overpass desde otra red): hoy el mapa no dibuja línea de ruta.
+- [ ] Fotos de las 5 estaciones (`app/assets/imagenes/estaciones/<id>.webp`), con crédito.
+- [ ] Fotos con licencia válida para las especies que quedaron sin foto en `catalogo.json`.
