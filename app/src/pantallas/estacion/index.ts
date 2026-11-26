@@ -1,5 +1,10 @@
 export { PanelEstacion, type PanelEstacionProps } from './PanelEstacion';
-export { FichaEspecie, type FichaEspecieProps, type ResolvedorImagen } from './FichaEspecie';
+export {
+  FichaEspecie,
+  resolverImagenEmpaquetada,
+  type FichaEspecieProps,
+  type ResolvedorImagen,
+} from './FichaEspecie';
 export {
   buscarCaracteristicasEspecie,
   construirEspeciesEstacion,

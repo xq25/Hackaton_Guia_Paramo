@@ -1,4 +1,5 @@
 import { Image, Linking, Pressable, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
+import { IMAGENES } from '../../../assets/imagenes/indice';
 import { CategoriaAmenaza, type Fragmento, type Guion } from '../../dominio/modelo';
 import { Etiqueta, Hoja } from '../comunes';
 import { colores, espacio, tamanos, tipografia } from '../tema';
@@ -9,6 +10,10 @@ import {
 } from './especiesEstacion';
 
 export type ResolvedorImagen = (ruta: string) => ImageSourcePropType | undefined;
+
+export function resolverImagenEmpaquetada(ruta: string): ImageSourcePropType | undefined {
+  return IMAGENES[ruta] ?? IMAGENES[`especies/${ruta}`];
+}
 
 export interface FichaEspecieProps {
   especie: EspecieVista | null;
@@ -23,11 +28,11 @@ export function FichaEspecie({
   alCerrar,
   fragmentos,
   guiones,
-  resolverImagen,
+  resolverImagen = resolverImagenEmpaquetada,
 }: FichaEspecieProps) {
   if (!especie) return null;
 
-  const fuenteImg = especie.rutaImagen && resolverImagen ? resolverImagen(especie.rutaImagen) : undefined;
+  const fuenteImg = especie.rutaImagen ? resolverImagen(especie.rutaImagen) : undefined;
   const textoUicn = describirAmenazaUicn(especie.categoriaAmenaza);
   const caracteristicas = buscarCaracteristicasEspecie(especie, fragmentos, guiones);
   const tituloFicha = especie.nombreComun ?? especie.nombreCientifico ?? 'Especie';
@@ -47,7 +52,7 @@ export function FichaEspecie({
       ) : (
         <View style={estilos.imagenRespaldo}>
           <Text style={estilos.iconoRespaldo}>🌿</Text>
-          <Text style={estilos.textoRespaldo}>Fotografía aún no empaquetada</Text>
+          <Text style={estilos.textoRespaldo}>Sin fotografía con licencia abierta registrada</Text>
         </View>
       )}
 
@@ -111,7 +116,7 @@ export function FichaEspecie({
             ) : null}
           </>
         ) : (
-          <Text style={estilos.textoCredito}>Ilustración propia del equipo / sin foto externa.</Text>
+          <Text style={estilos.textoCredito}>Sin fotografía externa (pendiente imagen con licencia libre).</Text>
         )}
       </View>
     </Hoja>

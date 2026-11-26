@@ -10,7 +10,11 @@ import {
 } from '../../dominio/modelo';
 import { Boton, Etiqueta, Hoja } from '../comunes';
 import { colores, espacio, tamanos, tipografia } from '../tema';
-import { FichaEspecie, type ResolvedorImagen } from './FichaEspecie';
+import {
+  FichaEspecie,
+  resolverImagenEmpaquetada,
+  type ResolvedorImagen,
+} from './FichaEspecie';
 import {
   construirEspeciesEstacion,
   formatearCitaFragmento,
@@ -24,11 +28,9 @@ export interface PanelEstacionProps {
   guiones: Guion[];
   catalogo: EspecieCatalogo[];
   cartasEspecie?: Coleccionable[];
-  /**
-   * Mientras llega S9 (juego), si se omite se muestran desbloqueadas temporalmente
-   * según la guía de Dev C. Cuando se conecta GestorProgreso, pasa true/false según visita.
-   */
   estacionVisitada?: boolean;
+  /** Permite consultar ProgresoJuego.especieDesbloqueada(progresoLocal, nombreCientifico). */
+  especieDesbloqueada?: (nombreCientifico: string | null) => boolean;
   modoDemoActivo?: boolean;
   alRegistrarLlegadaDemo?: (estacionId: string) => void;
   alPreguntarAlGuia: (estacionId: string) => void;
@@ -42,11 +44,12 @@ export function PanelEstacion({
   guiones,
   catalogo,
   cartasEspecie,
-  estacionVisitada = true,
+  estacionVisitada = false,
+  especieDesbloqueada,
   modoDemoActivo = false,
   alRegistrarLlegadaDemo,
   alPreguntarAlGuia,
-  resolverImagen,
+  resolverImagen = resolverImagenEmpaquetada,
 }: PanelEstacionProps) {
   const [especieActiva, setEspecieActiva] = useState<EspecieVista | null>(null);
 
@@ -65,11 +68,16 @@ export function PanelEstacion({
 
   if (!estacion) return null;
 
-  const imgEstacion = resolverImagen ? resolverImagen(estacion.imagen) : undefined;
+  const imgEstacion = resolverImagen(estacion.imagen);
   const textoAltitud =
     estacion.altitudMsnm !== null
       ? `${estacion.altitudMsnm} m s. n. m.`
       : 'Altitud no registrada en guion';
+
+  const estaEspecieDesbloqueada = (esp: EspecieVista): boolean => {
+    if (especieDesbloqueada) return especieDesbloqueada(esp.nombreCientifico);
+    return estacionVisitada;
+  };
 
   return (
     <>
@@ -104,7 +112,7 @@ export function PanelEstacion({
           <Text style={estilos.concepto}>{estacion.conceptoCentral}</Text>
         </View>
 
-        {/* Botón de llegada en modo demo (C6, activo cuando S9 + modo demo están conectados) */}
+        {/* Botón de llegada en modo demo (C6) */}
         {modoDemoActivo && alRegistrarLlegadaDemo ? (
           <Boton
             titulo="Registrar llegada (demo)"
@@ -114,11 +122,11 @@ export function PanelEstacion({
           />
         ) : null}
 
-        {/* 3. Dato curioso con cita */}
+        {/* 3. Datos curiosos con cita */}
         {datosCuriosos.length > 0 ? (
           <View style={estilos.bloqueDatoCurioso}>
             <Text style={estilos.subtitulo}>Dato curioso</Text>
-            {datosCuriosos.map((dc) => (
+            {datosCuriosos.slice(0, 3).map((dc) => (
               <View key={dc.id} style={estilos.tarjetaCuriosa}>
                 {dc.naturaleza === Naturaleza.TRADICION_ORAL ? (
                   <Etiqueta texto="Relato de tradición oral" variante="acento" />
@@ -144,8 +152,9 @@ export function PanelEstacion({
           {especies.length > 0 ? (
             <View style={estilos.cuadricula}>
               {especies.map((esp) => {
+                const desbloqueada = estaEspecieDesbloqueada(esp);
                 const mini =
-                  estacionVisitada && esp.rutaMiniatura && resolverImagen
+                  desbloqueada && esp.rutaMiniatura
                     ? resolverImagen(esp.rutaMiniatura)
                     : undefined;
                 const etiquetaNombre = esp.nombreComun ?? esp.nombreCientifico ?? 'Especie';
@@ -154,19 +163,19 @@ export function PanelEstacion({
                     key={esp.clave}
                     accessibilityRole="button"
                     accessibilityLabel={
-                      estacionVisitada
+                      desbloqueada
                         ? `Ver ficha de ${etiquetaNombre}`
-                        : 'Especie bloqueada. Llega a la estación para descubrirla'
+                        : 'Llega a la estación para descubrirla'
                     }
-                    disabled={!estacionVisitada}
+                    disabled={!desbloqueada}
                     onPress={() => setEspecieActiva(esp)}
                     style={({ pressed }) => [
                       estilos.celdaEspecie,
-                      !estacionVisitada && estilos.celdaBloqueada,
-                      pressed && estacionVisitada && estilos.presionado,
+                      !desbloqueada && estilos.celdaBloqueada,
+                      pressed && desbloqueada && estilos.presionado,
                     ]}
                   >
-                    {estacionVisitada ? (
+                    {desbloqueada ? (
                       <>
                         {mini ? (
                           <Image source={mini} style={estilos.miniImagen} resizeMode="cover" />
@@ -185,7 +194,7 @@ export function PanelEstacion({
                           <Text style={estilos.siluetaTexto}>?</Text>
                         </View>
                         <Text style={estilos.nombreBloqueado} numberOfLines={2}>
-                          Por descubrir
+                          Llega a la estación para descubrirla
                         </Text>
                       </>
                     )}
@@ -195,7 +204,7 @@ export function PanelEstacion({
             </View>
           ) : (
             <Text style={estilos.avisoBloqueo}>
-              Catálogo de especies de esta parada pendiente de carga.
+              Esta estación introductoria no registra tabla específica de especies en el guion.
             </Text>
           )}
         </View>
@@ -297,7 +306,7 @@ const estilos = StyleSheet.create({
   },
   celdaEspecie: {
     width: '31%',
-    minHeight: 112,
+    minHeight: 118,
     borderRadius: tamanos.radio,
     borderWidth: tamanos.bordeGrueso,
     borderColor: colores.borde,
@@ -342,7 +351,7 @@ const estilos = StyleSheet.create({
     color: colores.fondo,
   },
   nombreBloqueado: {
-    fontSize: tipografia.pequeno,
+    fontSize: 12,
     color: colores.textoSuave,
     textAlign: 'center',
   },

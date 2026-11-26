@@ -23,8 +23,8 @@ describe('especiesEstacion', () => {
     expect(debeOcultarUbicacion(null)).toBe(false);
   });
 
-  it('cruza Estacion.especies con el catálogo GBIF sin duplicar cartas especiales', () => {
-    const lunares = { ...ESTACIONES[3], especies: ['Vultur gryphus', 'Senecio canescens'] };
+  it('cruza Estacion.especies con el catálogo GBIF sin duplicar cartas especiales (incluidas coral y pajonal)', () => {
+    const lunares = { ...ESTACIONES[3], especies: ['Vultur gryphus', 'Andicolea colombiana'] };
     const catalogo: EspecieCatalogo[] = [
       {
         gbifKey: 2481940,
@@ -48,9 +48,12 @@ describe('especiesEstacion', () => {
     const condor = lista.find((e) => e.nombreCientifico === 'Vultur gryphus');
     expect(condor).toBeDefined();
     expect(condor?.ocultarUbicacion).toBe(true);
+    expect(condor?.rutaImagen).toBe('especies/condor.webp');
     expect(describirAmenazaUicn(condor?.categoriaAmenaza ?? null)).toContain('Fuente: GBIF');
-    // Vultur gryphus aparece una sola vez aunque esté en Estacion.especies, catálogo y COLECCIONABLES_ESPECIE
     expect(lista.filter((e) => e.nombreCientifico === 'Vultur gryphus').length).toBe(1);
+    expect(lista.filter((e) => e.nombreCientifico === 'Andicolea colombiana').length).toBe(1);
+    const coral = lista.find((e) => e.nombreCientifico === 'Andicolea colombiana');
+    expect(coral?.rutaImagen).toBeNull();
   });
 
   it('ignora fragmentos no aptos (salud) al buscar características', () => {
@@ -66,7 +69,7 @@ describe('especiesEstacion', () => {
         naturaleza: Naturaleza.CIENTIFICO,
         nivel: Nivel.BREVE,
         titulo: 'Coral de páramo',
-        texto: 'Planta adaptada al superpáramo rocoso.',
+        texto: 'Coral de páramo adaptado al superpáramo rocoso.',
         palabrasClave: ['coral'],
         apto: true,
         origen: 'guion',

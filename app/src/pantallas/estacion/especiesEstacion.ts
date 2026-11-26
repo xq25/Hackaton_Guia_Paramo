@@ -24,6 +24,16 @@ export interface EspecieVista {
   ocultarUbicacion: boolean;
 }
 
+/** Equivalencias científicas para las cartas de modelo.ts que no traen nombreCientifico. */
+const CIENTIFICO_POR_CARTA: Record<string, string> = {
+  frailejon: 'Espeletia hartwegiana',
+  pajonal: 'Paramochloa effusa',
+  coral_paramo: 'Andicolea colombiana',
+  condor: 'Vultur gryphus',
+  danta: 'Tapirus pinchaque',
+  periquito: 'Bolborhynchus ferrugineifrons',
+};
+
 const NOMBRES_UICN: Record<CategoriaAmenaza, string> = {
   [CategoriaAmenaza.CR]: 'En peligro crítico (CR)',
   [CategoriaAmenaza.EN]: 'En peligro (EN)',
@@ -61,7 +71,7 @@ function miniaturaDeArchivo(archivo: string | null): string | null {
 
 /**
  * Cruza `Estacion.especies`, `catalogo` (GBIF/iNaturalist) y las cartas especiales
- * (`COLECCIONABLES_ESPECIE`) para armar la cuadrícula 3×n de la estación.
+ * (`COLECCIONABLES_ESPECIE`) para armar la cuadrícula 3×n de la estación sin duplicados.
  */
 export function construirEspeciesEstacion(
   estacion: Estacion,
@@ -75,8 +85,9 @@ export function construirEspeciesEstacion(
 
   const porCientificoCarta = new Map<string, Coleccionable>();
   for (const carta of cartas) {
-    if (carta.nombreCientifico) {
-      porCientificoCarta.set(normalizarNombre(carta.nombreCientifico), carta);
+    const cient = carta.nombreCientifico ?? CIENTIFICO_POR_CARTA[carta.id];
+    if (cient) {
+      porCientificoCarta.set(normalizarNombre(cient), carta);
     }
   }
 
@@ -92,19 +103,22 @@ export function construirEspeciesEstacion(
     const cat = porCientificoCat.get(claveNorm);
     const carta = porCientificoCarta.get(claveNorm);
     const amenaza = cat?.categoriaAmenaza ?? carta?.categoriaAmenaza ?? null;
+    const credito = cat?.credito ?? carta?.credito ?? null;
 
     resultado.push({
       clave: carta?.id ?? claveNorm,
       nombreComun: carta?.nombre ?? cat?.nombreComun ?? null,
       nombreCientifico: cat?.nombreCientifico ?? cientifico,
       grupo: cat?.grupo ?? null,
-      rutaImagen: normalizarRutaEspecie(cat?.foto ?? carta?.imagen ?? null),
-      rutaMiniatura:
-        carta?.imagenMini
+      // Regla 9: la fotografía externa solo se muestra si cuenta con crédito de atribución.
+      rutaImagen: credito ? normalizarRutaEspecie(cat?.foto ?? carta?.imagen ?? null) : null,
+      rutaMiniatura: credito
+        ? carta?.imagenMini
           ? normalizarRutaEspecie(carta.imagenMini)
-          : miniaturaDeArchivo(cat?.foto ?? null),
+          : miniaturaDeArchivo(cat?.foto ?? null)
+        : null,
       categoriaAmenaza: amenaza,
-      credito: cat?.credito ?? carta?.credito ?? null,
+      credito,
       fragmentoIds: carta?.fragmentoIds ?? [],
       ocultarUbicacion: debeOcultarUbicacion(amenaza),
     });
@@ -119,38 +133,41 @@ export function construirEspeciesEstacion(
 
     const carta = porCientificoCarta.get(claveNorm);
     const amenaza = cat.categoriaAmenaza ?? carta?.categoriaAmenaza ?? null;
+    const credito = cat.credito ?? carta?.credito ?? null;
     resultado.push({
       clave: carta?.id ?? `gbif-${cat.gbifKey}`,
       nombreComun: carta?.nombre ?? cat.nombreComun,
       nombreCientifico: cat.nombreCientifico,
       grupo: cat.grupo,
-      rutaImagen: normalizarRutaEspecie(cat.foto ?? carta?.imagen ?? null),
-      rutaMiniatura: miniaturaDeArchivo(cat.foto ?? carta?.imagenMini ?? null),
+      rutaImagen: credito ? normalizarRutaEspecie(cat.foto ?? carta?.imagen ?? null) : null,
+      rutaMiniatura: credito ? miniaturaDeArchivo(cat.foto ?? carta?.imagenMini ?? null) : null,
       categoriaAmenaza: amenaza,
-      credito: cat.credito ?? carta?.credito ?? null,
+      credito,
       fragmentoIds: carta?.fragmentoIds ?? [],
       ocultarUbicacion: debeOcultarUbicacion(amenaza),
     });
   }
 
-  // 3. Cartas especiales asociadas a la estación (respaldo incluso antes de S2).
+  // 3. Cartas especiales asociadas a la estación (sin duplicar si ya entraron por nombre científico).
   for (const carta of cartas) {
     if (carta.estacionId !== estacion.id) continue;
-    const claveNorm = carta.nombreCientifico ? normalizarNombre(carta.nombreCientifico) : carta.id;
+    const cient = carta.nombreCientifico ?? CIENTIFICO_POR_CARTA[carta.id] ?? null;
+    const claveNorm = cient ? normalizarNombre(cient) : carta.id;
     if (agregadas.has(claveNorm)) continue;
     agregadas.add(claveNorm);
 
-    const cat = carta.nombreCientifico ? porCientificoCat.get(claveNorm) : undefined;
+    const cat = cient ? porCientificoCat.get(claveNorm) : undefined;
     const amenaza = cat?.categoriaAmenaza ?? carta.categoriaAmenaza;
+    const credito = cat?.credito ?? carta.credito;
     resultado.push({
       clave: carta.id,
       nombreComun: carta.nombre,
-      nombreCientifico: carta.nombreCientifico ?? null,
+      nombreCientifico: cient,
       grupo: cat?.grupo ?? null,
-      rutaImagen: normalizarRutaEspecie(cat?.foto ?? carta.imagen),
-      rutaMiniatura: normalizarRutaEspecie(carta.imagenMini),
+      rutaImagen: credito ? normalizarRutaEspecie(cat?.foto ?? carta.imagen) : null,
+      rutaMiniatura: credito ? normalizarRutaEspecie(carta.imagenMini) : null,
       categoriaAmenaza: amenaza,
-      credito: cat?.credito ?? carta.credito,
+      credito,
       fragmentoIds: carta.fragmentoIds,
       ocultarUbicacion: debeOcultarUbicacion(amenaza),
     });
@@ -183,22 +200,41 @@ export function buscarCaracteristicasEspecie(
   guiones: Guion[]
 ): FragmentoCitado[] {
   const aptos = fragmentos.filter((f) => f.apto);
+  const terminos = [especie.nombreCientifico, especie.nombreComun]
+    .filter((t): t is string => Boolean(t && t.trim()))
+    .map((t) =>
+      t
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+    );
+
+  const sinTildes = (s: string) =>
+    s
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+
   const seleccionados: Fragmento[] = [];
 
   for (const id of especie.fragmentoIds) {
-    for (const f of aptos) {
-      if (f.id === id || f.id.startsWith(`${id}-`)) {
-        if (!seleccionados.includes(f)) seleccionados.push(f);
-      }
+    const exacto = aptos.find((f) => f.id === id);
+    if (exacto) {
+      if (!seleccionados.includes(exacto)) seleccionados.push(exacto);
+      continue;
+    }
+    const dePagina = aptos.filter((f) => f.id.startsWith(`${id}-`));
+    const conTermino = dePagina.filter((f) =>
+      terminos.some((t) => sinTildes(`${f.titulo} ${f.texto}`).includes(t))
+    );
+    for (const f of conTermino.length > 0 ? conTermino : dePagina.slice(0, 1)) {
+      if (!seleccionados.includes(f)) seleccionados.push(f);
     }
   }
 
-  if (seleccionados.length === 0) {
-    const terminos = [especie.nombreCientifico, especie.nombreComun]
-      .filter((t): t is string => Boolean(t && t.trim()))
-      .map((t) => t.toLowerCase());
+  if (seleccionados.length === 0 && terminos.length > 0) {
     for (const f of aptos) {
-      const texto = `${f.titulo} ${f.texto}`.toLowerCase();
+      const texto = sinTildes(`${f.titulo} ${f.texto}`);
       if (terminos.some((t) => texto.includes(t))) {
         seleccionados.push(f);
         if (seleccionados.length >= 2) break;
