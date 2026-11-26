@@ -28,8 +28,8 @@ Ramas: `dev-a/<tarea>`. Python 3 + `scripts/requirements.txt` (`pyyaml`, `pillow
 | `app/assets/imagenes/indice.ts` | **Generado**: `export const IMAGENES: Record<string, number> = { 'especies/frailejon.webp': require('./especies/frailejon.webp'), ... }` (React Native no acepta `require` dinámico) | C |
 | `app/assets/mapa/zona.pmtiles` | Teselas vectoriales de la zona | C |
 | `app/assets/mapa/ruta.geojson` | `LineString` de la ruta + `Point` por estación con `{ estacionId, aproximada: true }` | C |
-| `app/src/juego/index.ts` | `crearGestorProgreso({ paquete, almacen }): GestorProgreso` (claves `progreso.`) | C |
-| `app/src/pantallas/juego/index.ts` | `PantallaInsignias`, `PantallaAlbum` (props `{ progreso: GestorProgreso; catalogo: EspecieCatalogo[]; alCerrar: () => void }`) y `Recompensa` (props `{ resultado; alCerrar }`, con el resultado de `registrarVisita`) | C |
+| `app/src/juego/index.ts` | `crearGestorProgreso({ paquete, almacen }): ProgresoJuego` (clave `progreso.v1`). `ProgresoJuego` = `GestorProgreso` + `paquete`, `coleccionables()`, `insignias()`, `fragmento(id)`, `fragmentosDeCarta(carta)`, `estacionVisitada(p, id)`, `especieDesbloqueada(p, nombreCientifico)` | C |
+| `app/src/pantallas/juego/index.ts` | `PantallaInsignias` `{ progreso: ProgresoJuego; alCerrar }`, `PantallaAlbum` `{ progreso: ProgresoJuego; catalogo: EspecieCatalogo[]; alCerrar }`, `Recompensa` `{ resultado: ResultadoVisita; alCerrar }` (el resultado de `registrarVisita`) | C |
 
 Reglas: nunca editar `contenido.json` a mano; si cambia, se regenera. Mantener los ids estables entre ejecuciones (B y los tests dependen de ellos).
 
