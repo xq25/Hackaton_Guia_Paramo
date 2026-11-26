@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "ParamON",
+    "slug": "paramon",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./iconos/icon.png",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "co.uton.paramon",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./iconos/android-icon-foreground.png",
+        "backgroundImage": "./iconos/android-icon-background.png",
+        "monochromeImage": "./iconos/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-asset",
+      "llama.rn"
+    ]
+  }
+}
