@@ -18,7 +18,7 @@ const paquete = contenidoMini as unknown as PaqueteContenido;
 
 const config: ConfiguracionApp = {
   rutaModelo: 'modelo-falso.gguf',
-  umbralEvidencia: 1,          // provisional: se calibra en B3/B5
+  umbralEvidencia: 8,          // calibrado con el fixture en B3; el real se calibra en B5
   maxFragmentos: 3,
   maxTokens: 200,
   timeoutModeloMs: 2000,
