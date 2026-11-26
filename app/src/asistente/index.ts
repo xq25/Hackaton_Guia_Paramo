@@ -14,7 +14,11 @@
 import type {
   Almacen,
   ConfiguracionApp,
+  Estacion,
+  FichaContenido,
+  Fragmento,
   GestorFichas,
+  Guion,
   MotorModelo,
   OrquestadorRespuestas,
   PaqueteContenido,
@@ -30,6 +34,17 @@ export interface Asistente {
   versionGuion(): string;               // versión del paquete + fichas activas
   precargarModelo(): Promise<void>;     // C la llama al abrir el chat
   liberarModelo(): Promise<void>;       // C la llama al ir a segundo plano
+  /** Solo para PantallaEditor (B7). Aditivo: C no necesita usarlo. */
+  editor: DatosEditor;
+}
+
+/** Lo que el editor de fichas necesita leer (siempre lo actual, tras publicar o importar). */
+export interface DatosEditor {
+  fichas(): FichaContenido[];
+  /** Fragmentos del guion original (aptos), para elegir cuál corregir. */
+  fragmentosGuion(): Fragmento[];
+  estaciones(): Estacion[];
+  guiones(): Guion[];
 }
 
 export function crearAsistente(deps: {
@@ -84,6 +99,12 @@ export function crearAsistente(deps: {
     orquestador,
     fichas: fichas.gestor,
     versionGuion: fichas.versionGuion,
+    editor: {
+      fichas: fichas.listar,
+      fragmentosGuion: () => (paquete.fragmentos ?? []).filter(f => f.apto),
+      estaciones: () => [...(paquete.estaciones ?? [])].sort((a, b) => a.orden - b.orden),
+      guiones: () => paquete.guiones ?? [],
+    },
     precargarModelo: async () => { await cargar(); },
     liberarModelo: async () => {
       cargando = null;
