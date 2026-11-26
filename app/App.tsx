@@ -1,20 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { almacen } from './src/datos/almacen';
+import { ProveedorApp } from './src/pantallas/ContextoApp';
+import { PantallaPrincipal } from './src/pantallas/PantallaPrincipal';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ProveedorApp almacen={almacen}>
+      <StatusBar style="dark" />
+      <PantallaPrincipal />
+    </ProveedorApp>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
