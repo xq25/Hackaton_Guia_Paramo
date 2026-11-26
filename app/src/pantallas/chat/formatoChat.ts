@@ -9,9 +9,14 @@ import {
   type Respuesta,
 } from '../../dominio/modelo';
 
-/** Cita visible debajo de cada respuesta: "Guion Ecoturístico UTON 2024 · p. 8 · Lunares". */
+/**
+ * Cita visible debajo de cada respuesta:
+ *   "Guion Ecoturístico UTON 2024 · p. 8 · Lunares"
+ * Si la fuente es una ficha de documento externo sin página (`pagina <= 0`), omite "p. 0".
+ */
 export function formatearCita(cita: Cita): string {
-  const partes = [cita.guionTitulo, `p. ${cita.pagina}`];
+  const partes = [cita.guionTitulo];
+  if (cita.pagina > 0) partes.push(`p. ${cita.pagina}`);
   if (cita.estacionNombre) partes.push(cita.estacionNombre);
   return partes.join(' · ');
 }
@@ -40,10 +45,7 @@ export function sugerenciasRecorrido(estaciones: Estacion[]): string[] {
   return lista;
 }
 
-/**
- * Datos de maqueta escritos en el componente para probar la interfaz mientras llega S1 (B0).
- * Apenas se inyecta `orquestador` desde `crearAsistente` (S1), este respaldo deja de usarse.
- */
+/** Respaldo solo para previsualizaciones aisladas o tests cuando no se pasa `orquestador`. */
 export const orquestadorMaqueta: OrquestadorRespuestas = {
   async responder(texto: string, estacionId: string | null, nivel: Nivel): Promise<Respuesta> {
     const q = texto.toLowerCase();

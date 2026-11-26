@@ -2,7 +2,7 @@ import { ESTACIONES, Naturaleza, Nivel, TipoRespuesta } from '../../../dominio/m
 import { esRespuestaLimite, formatearCita, orquestadorMaqueta, sugerenciasRecorrido } from '../formatoChat';
 
 describe('formatoChat', () => {
-  it('formatea la cita con guion, página y estación cuando existe', () => {
+  it('formatea la cita con guion, página y estación cuando existe, y omite página 0 en documentos externos', () => {
     expect(
       formatearCita({
         guionTitulo: 'Guion Ecoturístico UTON 2024',
@@ -20,6 +20,15 @@ describe('formatoChat', () => {
         naturaleza: Naturaleza.TRADICION_ORAL,
       })
     ).toBe('Guion Zona Norte · p. 1');
+
+    expect(
+      formatearCita({
+        guionTitulo: 'Circular Operativa UTON',
+        pagina: 0,
+        estacionNombre: 'Arenales',
+        naturaleza: Naturaleza.NORMA,
+      })
+    ).toBe('Circular Operativa UTON · Arenales');
   });
 
   it('distingue abstenciones y remisiones de respuestas normales', () => {

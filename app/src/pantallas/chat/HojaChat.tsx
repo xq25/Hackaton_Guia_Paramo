@@ -26,11 +26,11 @@ export interface HojaChatProps {
   alCerrar: () => void;
   estaciones: Estacion[];
   estacionInicialId?: string | null;
-  /** Entregado por crearAsistente (B) tras S1. Si falta, usa la maqueta local. */
   orquestador?: OrquestadorRespuestas;
   precargarModelo?: () => Promise<void>;
   liberarModelo?: () => Promise<void>;
   alAbrirSeguridad?: () => void;
+  alAbrirAlbum?: () => void;
 }
 
 interface MensajeChat {
@@ -52,6 +52,7 @@ export function HojaChat({
   precargarModelo,
   liberarModelo,
   alAbrirSeguridad,
+  alAbrirAlbum,
 }: HojaChatProps) {
   const [estacionId, setEstacionId] = useState<string | null>(estacionInicialId);
   const [entrada, setEntrada] = useState('');
@@ -60,7 +61,6 @@ export function HojaChat({
   const scrollRef = useRef<ComponentRef<typeof ScrollView> | null>(null);
   const secRef = useRef(1);
 
-  // Sincroniza la estación elegida al abrir desde un panel de estación.
   useEffect(() => {
     if (visible) {
       setEstacionId(estacionInicialId ?? null);
@@ -237,6 +237,7 @@ export function HojaChat({
                 enviarPregunta(m.textoPregunta, Nivel.AMPLIADO, m.id, m.estacionId)
               }
               alAbrirSeguridad={alAbrirSeguridad}
+              alAbrirAlbum={alAbrirAlbum}
             />
           ) : null
         )}
@@ -279,12 +280,14 @@ function TarjetaRespuesta({
   pensando,
   alAmpliar,
   alAbrirSeguridad,
+  alAbrirAlbum,
 }: {
   mensaje: MensajeChat;
   respuesta: Respuesta;
   pensando: boolean;
   alAmpliar: () => void;
   alAbrirSeguridad?: () => void;
+  alAbrirAlbum?: () => void;
 }) {
   const esLimite = esRespuestaLimite(respuesta.tipo);
 
@@ -331,6 +334,18 @@ function TarjetaRespuesta({
           variante="secundario"
           deshabilitado={pensando}
           alPresionar={alAmpliar}
+          estilo={estilos.botonAccion}
+        />
+      ) : null}
+
+      {respuesta.tipo === TipoRespuesta.ABSTENCION &&
+      respuesta.motivo === MotivoLimite.SIN_EVIDENCIA &&
+      alAbrirAlbum ? (
+        <Boton
+          titulo="Ver en el álbum"
+          icono="📘"
+          variante="secundario"
+          alPresionar={alAbrirAlbum}
           estilo={estilos.botonAccion}
         />
       ) : null}
