@@ -33,3 +33,9 @@ Formato: una línea de decisión + por qué. Las nuevas van al final; si una cam
 - [ ] Texto y respuesta de los 4 retos, validados contra el guion.
 - [ ] Medir en el celular de demo: tiempo de respuesta de Gemma E2B y consumo de batería (va en la ficha de una página).
 - [ ] Nombres comunes de especies: validar los de `docs/referencia/gbif-nevados.md` §5.4.
+- [ ] **Equivalencias común → científico** de las tablas de estación marcadas `validar: true` en `contenido/mapeo.yaml` (águila, conejo, cusumbo, pajonal, coral de páramo…): las propuso el equipo, no vienen del guion.
+- [ ] Fecha del Guion turístico zona norte (el documento no la trae; va como "s.f.").
+- [ ] Posición de **Aguacerales** y **Lunares**: no existen en OpenStreetMap. Brisas, Arenales y Valle de las Tumbas usan la posición de OSM (aproximada).
+- [ ] Trazado real del sendero (track GPS de UTON u OSM vía Overpass desde otra red): hoy el mapa no dibuja línea de ruta.
+- [ ] Fotos de las 5 estaciones (`app/assets/imagenes/estaciones/<id>.webp`), con crédito.
+- [ ] Fotos con licencia válida para las especies que quedaron sin foto en `catalogo.json`.
