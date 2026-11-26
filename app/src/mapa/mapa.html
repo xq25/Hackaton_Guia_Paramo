@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>ParamON · mapa</title>
+<style>/*__LEAFLET_CSS__*/</style>
+<style>
+  html, body, #mapa { margin: 0; padding: 0; width: 100%; height: 100%; background: #E8ECE6; }
+  .leaflet-container { font-family: sans-serif; }
+  .etiqueta-estacion {
+    background: #FFFFFF; color: #111111; border: 2px solid #1B1B1B; border-radius: 8px;
+    font-size: 15px; font-weight: 700; padding: 2px 6px; box-shadow: none;
+  }
+  .etiqueta-estacion small { display: block; font-weight: 400; font-size: 11px; color: #3D3D3D; }
+  .leaflet-tooltip-top.etiqueta-estacion::before { border-top-color: #1B1B1B; }
+</style>
+<script>/*__LEAFLET_JS__*/</script>
+<script>/*__PMTILES_JS__*/</script>
+<script>/*__PROTOMAPS_JS__*/</script>
+</head>
+<body>
+<div id="mapa"></div>
+<script>
+(function () {
+  // Recuadro del recorrido Brisas → Valle de las Tumbas (guía de A, tarea A4).
+  var LIMITES = L.latLngBounds([4.85, -75.42], [4.96, -75.28]);
+  var COLOR_SIN_VISITAR = '#8A8A8A';
+  var COLOR_VISITADA = '#15803D';
+
+  function enviar(msg) {
+    if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(JSON.stringify(msg));
+  }
+  window.onerror = function (m) { enviar({ tipo: 'error', mensaje: String(m) }); };
+
+  var mapa = L.map('mapa', {
+    zoomControl: true, attributionControl: true,
+    maxBounds: LIMITES.pad(0.5), minZoom: 11, maxZoom: 17,
+  }).fitBounds(LIMITES);
+  mapa.attributionControl.setPrefix(false);
+
+  // ── Teselas: el archivo .pmtiles se lee por rangos a través de React Native ──
+  var pendientes = {};
+  var siguienteId = 1;
+
+  function base64ABytes(b64) {
+    var bin = atob(b64), n = bin.length, out = new Uint8Array(n);
+    for (var i = 0; i < n; i++) out[i] = bin.charCodeAt(i);
+    return out.buffer;
+  }
+
+  var FuentePuente = {
+    getKey: function () { return 'paramon-zona'; },
+    getBytes: function (offset, length) {
+      return new Promise(function (resolve, reject) {
+        var id = siguienteId++;
+        pendientes[id] = { resolve: resolve, reject: reject };
+        enviar({ tipo: 'rango', id: id, offset: offset, length: length });
+      });
+    },
+  };
+
+  var capaTeselas = null;
+  function cargarTeselas() {
+    if (capaTeselas) return;
+    var archivo = new pmtiles.PMTiles(FuentePuente);
+    capaTeselas = protomapsL.leafletLayer({
+      url: archivo, flavor: 'light', lang: 'es',
+      attribution: '© OpenStreetMap · Protomaps',
+    });
+    capaTeselas.addTo(mapa);
+  }
+
+  // ── Ruta y estaciones ──
+  var capaRuta = null;
+  var marcadores = {};
+  var visitadas = {};
+
+  function estiloPin(id) {
+    var v = !!visitadas[id];
+    return { radius: 13, weight: 3, color: '#1B1B1B', fillColor: v ? COLOR_VISITADA : COLOR_SIN_VISITAR, fillOpacity: 1 };
+  }
+
+  function dibujar(ruta, estaciones) {
+    if (capaRuta) { capaRuta.remove(); capaRuta = null; }
+    Object.keys(marcadores).forEach(function (k) { marcadores[k].remove(); });
+    marcadores = {};
+
+    if (ruta) {
+      capaRuta = L.geoJSON(ruta, {
+        filter: function (f) { return f.geometry && f.geometry.type !== 'Point'; },
+        style: { color: '#14532D', weight: 5, opacity: 0.9, dashArray: '10 8' },
+      }).addTo(mapa);
+    }
+
+    var puntos = [];
+    estaciones.forEach(function (e) {
+      if (e.lat == null || e.lon == null) return;
+      var m = L.circleMarker([e.lat, e.lon], estiloPin(e.id))
+        .bindTooltip(e.nombre + (e.aproximada ? '<small>ubicación aproximada</small>' : ''), {
+          permanent: true, direction: 'top', offset: [0, -12], className: 'etiqueta-estacion',
+        })
+        .on('click', function () { enviar({ tipo: 'estacion', id: e.id }); })
+        .addTo(mapa);
+      marcadores[e.id] = m;
+      puntos.push([e.lat, e.lon]);
+    });
+    if (puntos.length > 1) mapa.fitBounds(L.latLngBounds(puntos).pad(0.25));
+  }
+
+  function actualizarVisitas(ids) {
+    visitadas = {};
+    (ids || []).forEach(function (id) { visitadas[id] = true; });
+    Object.keys(marcadores).forEach(function (id) { marcadores[id].setStyle(estiloPin(id)); });
+  }
+
+  // ── Mensajes desde React Native ──
+  window.recibir = function (msg) {
+    try {
+      if (msg.tipo === 'iniciar') {
+        visitadas = {};
+        (msg.visitadas || []).forEach(function (id) { visitadas[id] = true; });
+        if (msg.tieneTeselas) cargarTeselas();
+        dibujar(msg.ruta || null, msg.estaciones || []);
+      } else if (msg.tipo === 'visitas') {
+        actualizarVisitas(msg.visitadas);
+      } else if (msg.tipo === 'rangoOk') {
+        var p = pendientes[msg.id]; delete pendientes[msg.id];
+        if (p) p.resolve({ data: base64ABytes(msg.base64) });
+      } else if (msg.tipo === 'rangoError') {
+        var q = pendientes[msg.id]; delete pendientes[msg.id];
+        if (q) q.reject(new Error(msg.mensaje || 'No se pudo leer el mapa'));
+      }
+    } catch (err) {
+      enviar({ tipo: 'error', mensaje: String(err) });
+    }
+  };
+
+  enviar({ tipo: 'listo' });
+})();
+</script>
+</body>
+</html>
