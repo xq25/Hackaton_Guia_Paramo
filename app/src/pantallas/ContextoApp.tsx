@@ -10,7 +10,11 @@ import {
 import { crearAsistente, type Asistente } from '../asistente';
 import { CONFIG } from '../config';
 import { claveCorrecta } from '../datos/claves';
-import { existeArchivoModelo, motorSinArchivoLocal } from '../datos/modeloLocal';
+import {
+  motorSinArchivoLocal,
+  resolverRutaModeloActiva,
+  type EstadoArchivoModelo,
+} from '../datos/modeloLocal';
 import { cargarCatalogo, cargarPaquete } from '../datos/repositorio';
 import {
   MetodoRegistro,
@@ -41,9 +45,11 @@ export interface EstadoApp {
   catalogo: EspecieCatalogo[];
   config: ConfiguracionApp;
   almacen: Almacen;
-  /** Única instancia de Asistente (Dev B) y ProgresoJuego (Dev A) para toda la app. */
+  /** Única instancia activa de Asistente (Dev B) y ProgresoJuego (Dev A). */
   asistente: Asistente;
+  estadoModelo: EstadoArchivoModelo;
   modeloLocalDisponible: boolean;
+  refrescarEstadoModelo: () => Promise<void>;
   versionGuion: string;
   refrescarVersionGuion: () => void;
   progreso: ProgresoJuego;
@@ -68,9 +74,6 @@ export interface ProveedorAppProps {
   children: ReactNode;
 }
 
-/**
- * Crea e inyecta una sola vez Asistente (B) y ProgresoJuego (A) en toda la aplicación.
- */
 export function ProveedorApp({
   almacen,
   paquete: paqueteProp,
@@ -83,23 +86,33 @@ export function ProveedorApp({
   const paquete = useMemo(() => paqueteProp ?? cargarPaquete(), [paqueteProp]);
   const catalogo = useMemo(() => catalogoProp ?? cargarCatalogo(), [catalogoProp]);
 
-  const modeloLocalDisponible = useMemo(
-    () => existeArchivoModelo(config.rutaModelo),
-    [config.rutaModelo]
+  const [revisionModelo, setRevisionModelo] = useState(0);
+
+  const estadoModelo = useMemo(
+    () => resolverRutaModeloActiva(config.rutaModelo),
+    // revisionModelo permite recargar en caliente tras descargar o importar un .gguf en Ajustes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [config.rutaModelo, revisionModelo]
   );
 
-  const asistente = useMemo(
-    () =>
-      asistenteProp ??
-      crearAsistente({
-        paquete,
-        config,
-        almacen,
-        // Si modelo.gguf aún no está copiado en el celular, responde al instante con el guion oficial.
-        modelo: modeloLocalDisponible ? undefined : motorSinArchivoLocal,
-      }),
-    [asistenteProp, paquete, config, almacen, modeloLocalDisponible]
-  );
+  const asistente = useMemo(() => {
+    if (asistenteProp) return asistenteProp;
+    const configEfectiva: ConfiguracionApp = {
+      ...config,
+      rutaModelo: estadoModelo.rutaEfectiva,
+    };
+    return crearAsistente({
+      paquete,
+      config: configEfectiva,
+      almacen,
+      modelo: estadoModelo.disponible ? undefined : motorSinArchivoLocal,
+    });
+  }, [asistenteProp, paquete, config, almacen, estadoModelo]);
+
+  const refrescarEstadoModelo = useCallback(async () => {
+    await asistente.liberarModelo();
+    setRevisionModelo((n) => n + 1);
+  }, [asistente]);
 
   const progreso = useMemo(
     () => progresoProp ?? crearGestorProgreso({ paquete, almacen }),
@@ -109,8 +122,6 @@ export function ProveedorApp({
   const [revisionGuion, setRevisionGuion] = useState(0);
   const [estadoProgreso, setEstadoProgreso] = useState<ProgresoLocal>(PROGRESO_VACIO);
 
-  // Con geocerca desactivada (modo pruebas fuera del parque, D13/D20), el simulador arranca activo
-  // salvo que el usuario lo desactive explícitamente en Ajustes.
   const [modoDemoActivo, setModoDemoActivo] = useState<boolean>(() => {
     const guardado = almacen.leer(CLAVE_MODO_DEMO);
     if (guardado === '0') return false;
@@ -191,7 +202,9 @@ export function ProveedorApp({
       config,
       almacen,
       asistente,
-      modeloLocalDisponible,
+      estadoModelo,
+      modeloLocalDisponible: estadoModelo.disponible,
+      refrescarEstadoModelo,
       versionGuion,
       refrescarVersionGuion,
       progreso,
@@ -209,7 +222,8 @@ export function ProveedorApp({
       config,
       almacen,
       asistente,
-      modeloLocalDisponible,
+      estadoModelo,
+      refrescarEstadoModelo,
       versionGuion,
       refrescarVersionGuion,
       progreso,

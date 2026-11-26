@@ -27,7 +27,9 @@ export function PantallaPrincipal() {
     catalogo,
     config,
     asistente,
+    estadoModelo,
     modeloLocalDisponible,
+    refrescarEstadoModelo,
     versionGuion,
     refrescarVersionGuion,
     progreso,
@@ -299,6 +301,7 @@ export function PantallaPrincipal() {
         precargarModelo={asistente.precargarModelo}
         liberarModelo={asistente.liberarModelo}
         modeloLocalDisponible={modeloLocalDisponible}
+        alAbrirAjustesModelo={() => setHojaActiva('ajustes')}
         alAbrirSeguridad={() => setHojaActiva('seguridad')}
         alAbrirAlbum={() => setHojaActiva('album')}
       />
@@ -334,6 +337,8 @@ export function PantallaPrincipal() {
         verificarPinDemo={verificarPinDemo}
         alCambiarModoDemo={cambiarModoDemo}
         alReiniciarProgreso={reiniciarProgreso}
+        estadoModelo={estadoModelo}
+        alActualizarModelo={refrescarEstadoModelo}
       />
 
       {/* Pantallas de juego de Dev A (S9) */}
